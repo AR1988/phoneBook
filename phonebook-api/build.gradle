@@ -1,0 +1,72 @@
+plugins {
+    id 'org.springframework.boot' version '2.3.0.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+    id "io.swagger.core.v3.swagger-gradle-plugin" version "2.1.4"
+}
+
+group = 'com.telran'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    compile 'org.flywaydb:flyway-core:6.5.0'
+
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.postgresql:postgresql'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+    implementation 'com.h2database:h2'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+    compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+    testCompile group: 'io.swagger', name: 'swagger-parser', version:'1.0.34'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+// ui tasks
+
+ext {
+    uiBuildDirectory = "src/main/resources/static"
+}
+
+task buildUi {
+    dependsOn('copyUiBuild')
+    group('build')
+}
+
+task copyUiBuild(type: Copy) {
+    dependsOn(':phonebook-ui:npm_run_build')
+    dependsOn('clearUiBuild')
+    from("${project(":phonebook-ui").projectDir}/dist/phonebook-ui")
+    into(project.ext.uiBuildDirectory)
+}
+
+task clearUiBuild(type: Delete) {
+    def files = file(project.ext.uiBuildDirectory).listFiles()
+    if (files)
+        delete(files)
+}
+
