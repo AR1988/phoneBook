@@ -23,5 +23,5 @@ spring.flyway.locations=classpath:db/migration
 spring.flyway.user=
 spring.flyway.password=
 
-com.telran.auth.jwt.secret=java
+com.telran.auth.jwt.secret=
 

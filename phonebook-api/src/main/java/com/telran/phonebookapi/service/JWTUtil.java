@@ -20,7 +20,8 @@ public class JWTUtil {
     String jwtSecret;
 
     public String generateAccessToken(String email) {
-        Date date = Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+       // Date date = Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date date = new Date(System.currentTimeMillis() + 864_000_000);
         Claims claims = new DefaultClaims();
         claims.put("username", email);
 
