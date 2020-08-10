@@ -17,6 +17,8 @@ public class User {
     @Setter
     private String password;
     @Setter
+    private String userRole;
+    @Setter
     private boolean isActive;
     @OneToOne
     private Contact myProfile;
