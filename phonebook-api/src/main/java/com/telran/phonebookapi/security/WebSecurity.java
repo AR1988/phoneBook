@@ -29,18 +29,18 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers("/api/user/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .addFilterBefore(new JWTAuthenticationFilter(
-                                authenticationManager(),
-                                om, jwtUtil),
-                        UsernamePasswordAuthenticationFilter.class)
-                .addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailService))
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//        http.cors().and().csrf().disable().authorizeRequests()
+//                .antMatchers("/api/user/**").permitAll()
+//                .anyRequest().authenticated()
+//                .and()
+//                .addFilterBefore(new JWTAuthenticationFilter(
+//                                authenticationManager(),
+//                                om, jwtUtil),
+//                        UsernamePasswordAuthenticationFilter.class)
+//                .addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailService))
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.cors().and().csrf().disable();
     }
-
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailService).passwordEncoder(bCryptPasswordEncoder);

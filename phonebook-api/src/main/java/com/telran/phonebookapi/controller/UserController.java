@@ -1,6 +1,5 @@
 package com.telran.phonebookapi.controller;
 
-import com.telran.phonebookapi.dto.ContactDto;
 import com.telran.phonebookapi.dto.NewPasswordDto;
 import com.telran.phonebookapi.dto.RecoveryPasswordDto;
 import com.telran.phonebookapi.dto.UserDto;
@@ -51,14 +50,5 @@ public class UserController {
         return new ResponseEntity<>(bumbum, HttpStatus.OK);
     }
 
-    @PutMapping("/user")
-    public void editContact(@Valid @RequestBody UserDto userDto) {
-        userService.editAllFields(userDto);
-    }
-
-    @DeleteMapping("/user/{id}")
-    public void removeById(@PathVariable String id) {
-        userService.removeById(id);
-    }
 }
 
