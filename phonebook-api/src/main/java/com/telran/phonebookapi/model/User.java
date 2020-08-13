@@ -21,6 +21,7 @@ public class User {
     @Setter
     private boolean isActive;
     @OneToOne
+    @Setter
     private Contact myProfile;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)

@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "com.telran.auth.jwt.secret",
+      "type": "java.lang.String",
+      "description": "Description for com.telran.auth.jwt.secret."
+  }
+] }

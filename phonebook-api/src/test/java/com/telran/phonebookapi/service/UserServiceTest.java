@@ -1,6 +1,8 @@
 package com.telran.phonebookapi.service;
 
+import com.telran.phonebookapi.dto.ContactDto;
 import com.telran.phonebookapi.dto.UserDto;
+import com.telran.phonebookapi.model.Contact;
 import com.telran.phonebookapi.model.RecoveryToken;
 import com.telran.phonebookapi.model.User;
 import com.telran.phonebookapi.persistance.IActivationTokenRepository;
@@ -8,13 +10,19 @@ import com.telran.phonebookapi.persistance.IRecoveryTokenRepository;
 import com.telran.phonebookapi.persistance.IUserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -89,6 +97,62 @@ class UserServiceTest {
         verify(emailSender, times(1)).sendMail(eq(userDto.email),
                 eq(UserService.ACTIVATION_SUBJECT),
                 anyString());
+    }
+
+    @Test
+    public void testEditAllFields_userExist_AllFieldsChanged() {
+
+        User oldUser = new User("test@gmail.com", "12345678");
+        Contact oldProfile = new Contact();
+        oldProfile.setFirstName("Name");
+        oldProfile.setLastName("LastName");
+        oldUser.setMyProfile(oldProfile);
+
+        UserDto userDto = new UserDto("test@gmail.com", "12345678");
+        ContactDto profileDto = new ContactDto();
+        profileDto.firstName = "NewName";
+        profileDto.lastName = "NewLastName";
+        userDto.myProfile = profileDto;
+
+        when(userRepository.findById(userDto.email)).thenReturn(Optional.of(oldUser));
+
+        userService.editAllFields(userDto);
+
+        verify(userRepository, times(1)).save(any());
+
+        verify(userRepository, times(1)).save(argThat(user ->
+                user.getEmail().equals(userDto.email)
+                        && user.getMyProfile().getFirstName().equals(userDto.myProfile.firstName) && user.getMyProfile().getLastName().equals(userDto.myProfile.lastName
+        )));
+    }
+
+    @Test
+    public void testEditAny_userDoesNotExist_EntityNotFoundException() {
+
+        UserDto userDto = new UserDto("test@gmail.com", "12345678");
+
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> userService.editAllFields(userDto));
+
+        verify(userRepository, times(1)).findById(any());
+        assertEquals("Error! This user doesn't exist in our DB", exception.getMessage());
+    }
+
+    @Captor
+    ArgumentCaptor<User> userCaptor;
+
+    @Test
+    public void testRemoveById_userExists_UserDeleted() {
+
+        User user = new User("test@gmail.com", "12345678");
+
+        UserDto userDto = new UserDto(user.getEmail(), user.getPassword());
+
+        when(userRepository.findById(userDto.email)).thenReturn(Optional.of(user));
+        userService.removeById(userDto.email);
+
+        List <User> capturedUsers = userCaptor.getAllValues();
+        verify(userRepository, times(1)).deleteById(userDto.email);
+        assertEquals(0, capturedUsers.size());
     }
 
 }

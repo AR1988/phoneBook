@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.UUID;
 
 @Service
@@ -101,6 +102,20 @@ public class UserService {
         ourUser.setPassword(encryptedPassword);
         userRepository.save(ourUser);
         recoveryTokenRepository.delete(token);
+    }
+
+    public void editAllFields(UserDto userDto) {
+        User user = userRepository.findById(userDto.email).orElseThrow(() -> new EntityNotFoundException(USER_DOES_NOT_EXIST));
+        Contact contact = user.getMyProfile();
+        contact.setFirstName(userDto.myProfile.firstName);
+        contact.setLastName(userDto.myProfile.lastName);
+        user.setMyProfile(contact);
+        userRepository.save(user);
+    }
+
+    public void removeById(String id) {
+        userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(USER_DOES_NOT_EXIST));
+        userRepository.deleteById(id);
     }
 
 }

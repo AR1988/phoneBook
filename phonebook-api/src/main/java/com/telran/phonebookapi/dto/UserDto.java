@@ -15,7 +15,6 @@ public class UserDto {
                    String password) {
         this.email = email;
         this.password = password;
-
     }
 
     @Email(message = "Please, check entered email is correct",
@@ -28,5 +27,7 @@ public class UserDto {
     public String password;
 
     public List<ContactDto> contactDtos = new ArrayList<>();
+
+    public ContactDto myProfile;
 
 }
