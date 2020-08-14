@@ -46,7 +46,7 @@ public class ContactController {
 
     @PostMapping("/all")
     public List<ContactDto> requestAllContactsByUserEmail(@Valid @RequestBody UserEmailDto userEmailDto) {
-        return contactService.getAllContactsByUserId(userEmailDto.email);
+        return contactService.getAllContactsByUserId(userEmailDto);
     }
 
     @PostMapping("/profile")
@@ -59,4 +59,8 @@ public class ContactController {
         contactService.editProfile(contactDto);
     }
 
+    @PostMapping("/get-profile")
+    public ContactDto getProfile(@Valid @RequestBody UserEmailDto userEmailDto) {
+        return contactService.getProfile(userEmailDto);
+    }
 }

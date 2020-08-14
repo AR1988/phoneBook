@@ -35,10 +35,8 @@ public class User {
         contacts.add(contact);
     }
 
-    public Contact addProfile(Contact contact) {
-        Contact profile = new Contact(contact.getFirstName(), contact.getUser());
-        profile.setLastName(contact.getLastName());
-        return this.myProfile = profile;
+    public void addProfile(Contact contact) {
+        this.myProfile = contact;
     }
 
     List<Contact> getContacts() {

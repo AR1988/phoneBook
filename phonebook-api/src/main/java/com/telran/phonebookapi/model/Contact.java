@@ -26,6 +26,7 @@ public class Contact {
     private String lastName;
     @Setter
     private String description;
+    @Setter
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
