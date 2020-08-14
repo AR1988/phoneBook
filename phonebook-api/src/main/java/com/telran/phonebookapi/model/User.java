@@ -21,6 +21,7 @@ public class User {
     @Setter
     private boolean isActive;
     @OneToOne
+    @Setter
     private Contact myProfile;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
@@ -29,16 +30,15 @@ public class User {
     public User(String email, String password) {
         this.email = email;
         this.password = password;
+        contacts.add(new Contact());
     }
 
     public void addContact(Contact contact) {
         contacts.add(contact);
     }
 
-    public Contact addProfile(Contact contact) {
-        Contact profile = new Contact(contact.getFirstName(), contact.getUser());
-        profile.setLastName(contact.getLastName());
-        return this.myProfile = profile;
+    public void addProfile(Contact contact) {
+        this.myProfile = contact;
     }
 
     List<Contact> getContacts() {

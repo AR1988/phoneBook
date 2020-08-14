@@ -62,6 +62,10 @@ public class UserService {
             String encodedPassword = bCryptPasswordEncoder.encode(userDto.password);
             User user = new User(userDto.email, encodedPassword);
             user.setActive(false);
+
+            Contact profile = new Contact();
+            user.setMyProfile(profile);
+            contactRepository.save(profile);
             userRepository.save(user);
 
             userDto.contactDtos.stream()

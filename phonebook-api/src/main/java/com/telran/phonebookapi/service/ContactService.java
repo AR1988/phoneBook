@@ -91,19 +91,17 @@ public class ContactService {
 
     public void addProfile(ContactDto contactDto) {
         User user = userRepository.findById(contactDto.userId).orElseThrow(() -> new EntityNotFoundException(UserService.USER_DOES_NOT_EXIST));
-        Contact contact = new Contact();
-        contact.setFirstName(contactDto.firstName);
-        contact.setLastName(contactDto.lastName);
-        Contact profile = user.addProfile(contact);
+        Contact profile = user.getMyProfile();
+        profile.setFirstName(contactDto.firstName);
+        profile.setLastName(contactDto.lastName);
+        user.addProfile(profile);
         contactRepository.save(profile);
     }
 
-        public void editProfile(ContactDto contactDto) {
-        Contact contact = contactRepository.findById(contactDto.id).orElseThrow(() -> new EntityNotFoundException(CONTACT_DOES_NOT_EXIST));
-        contact.setFirstName(contactDto.firstName);
-        contact.setLastName(contactDto.lastName);
-        User user = userRepository.findById(contactDto.userId).orElseThrow(() -> new EntityNotFoundException(UserService.USER_DOES_NOT_EXIST));
-        Contact profile = user.addProfile(contact);
-        contactRepository.save(profile);
+    public void editProfile(ContactDto contactDto) {
+        Contact newProfile = contactRepository.findById(contactDto.id).orElseThrow(() -> new EntityNotFoundException(CONTACT_DOES_NOT_EXIST));
+        newProfile.setFirstName(contactDto.firstName);
+        newProfile.setLastName(contactDto.lastName);
+        contactRepository.save(newProfile);
     }
 }
