@@ -89,73 +89,45 @@ public class ContactService {
     }
 
     public List<ContactDto> getAllContactsByUserId(UserEmailDto userEmailDto) {
-
         return contactRepository.findAllByUserEmail(userEmailDto.email).stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
-
     public void addProfile(ContactDto contactDto) {
         User user = userRepository.findById(contactDto.userId).orElseThrow(() -> new EntityNotFoundException(UserService.USER_DOES_NOT_EXIST));
-
-        Contact contact = new Contact();
-        contact.setFirstName(contactDto.firstName);
-        contact.setLastName(contactDto.lastName);
-        contact.setDescription(contactDto.description);
-        contact.setUser(user);
-
-        user.addProfile(contact);
-        contactRepository.save(contact);
+        Contact profile = user.getMyProfile();
+        profile.setFirstName(contactDto.firstName);
+        profile.setLastName(contactDto.lastName);
+        contact.setDescription(contactDto.description); 
+        contact.setUser(user);        
+        user.addProfile(profile);
+        contactRepository.save(profile);
     }
 
     public void editProfile(ContactDto contactDto) {
-        Contact contact = contactRepository.findById(contactDto.id).orElseThrow(() -> new EntityNotFoundException(CONTACT_DOES_NOT_EXIST));
-        contact.setFirstName(contactDto.firstName);
-        contact.setLastName(contactDto.lastName);
-        User user = userRepository.findById(contactDto.userId).orElseThrow(() -> new EntityNotFoundException(UserService.USER_DOES_NOT_EXIST));
-        user.addProfile(contact);
-        contactRepository.save(contact);
+        Contact newProfile = contactRepository.findById(contactDto.id).orElseThrow(() -> new EntityNotFoundException(CONTACT_DOES_NOT_EXIST));
+        newProfile.setFirstName(contactDto.firstName);
+        newProfile.setLastName(contactDto.lastName);
+        contactRepository.save(newProfile);
     }
-
-
+  
     private List<PhoneDto> getAllPhonesByContact(Contact contact) {
-        List<Phone> phones = phoneRepository.findAllByContactId(contact.getId());
-
-        return phones
+        return phoneRepository.findAllByContactId(contact.getId())
                 .stream()
-                .map(this::convertPhoneNumberToDto)
+                .map(phoneMapper::mapPhoneToDto)
                 .collect(Collectors.toList());
     }
 
     private List<AddressDto> getAllAddressesByContact(Contact contact) {
-        List<Address> phones = addressRepository.findAllByContactId(contact.getId());
-
-        return phones
+        return addressRepository.findAllByContactId(contact.getId())
                 .stream()
-                .map(this::convertFromAddressToAddressDTO)
+                .map(addressMapper::mapAddressToDto)
                 .collect(Collectors.toList());
     }
-
+  
     private List<String> getAllEmails(Contact contact) {
-
-        //TODO добавил пока так, не знаю как добавлять emails
-        List<String> email = Arrays.asList("eamil.1@gmaiil.com",
-                "eamil.2@gmaiil.com",
-                "eamil.3@gmaiil.com",
-                "eamil.4@gmaiil.com");
-
-        email.forEach(contact::addEmail);
-        return contact.getEmails();
-    }
-
-
-    private PhoneDto convertPhoneNumberToDto(Phone phoneNumber) {
-        return phoneMapper.mapPhoneToDto(phoneNumber);
-    }
-
-    private AddressDto convertFromAddressToAddressDTO(Address address) {
-        return addressMapper.mapAddressToDto(address);
+      
     }
 
     private ContactDto convertToDto(Contact contact) {
