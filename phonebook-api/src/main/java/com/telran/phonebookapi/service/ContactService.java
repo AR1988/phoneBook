@@ -1,10 +1,15 @@
 package com.telran.phonebookapi.service;
 
+import com.telran.phonebookapi.dto.AddressDto;
 import com.telran.phonebookapi.dto.ContactDto;
+import com.telran.phonebookapi.dto.PhoneDto;
+import com.telran.phonebookapi.dto.UserEmailDto;
 import com.telran.phonebookapi.mapper.AddressMapper;
 import com.telran.phonebookapi.mapper.ContactMapper;
 import com.telran.phonebookapi.mapper.PhoneMapper;
+import com.telran.phonebookapi.model.Address;
 import com.telran.phonebookapi.model.Contact;
+import com.telran.phonebookapi.model.Phone;
 import com.telran.phonebookapi.model.User;
 import com.telran.phonebookapi.persistance.IAddressRepository;
 import com.telran.phonebookapi.persistance.IContactRepository;
@@ -13,6 +18,7 @@ import com.telran.phonebookapi.persistance.IUserRepository;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,13 +55,12 @@ public class ContactService {
 
     public ContactDto getById(int id) {
         Contact contact = contactRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(CONTACT_DOES_NOT_EXIST));
-        ContactDto contactDto = contactMapper.mapContactToDto(contact);
-        return contactDto;
+        return contactMapper.mapContactToDto(contact);
     }
 
     public ContactDto getByIdFullDetails(int id) {
         Contact contact = contactRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(CONTACT_DOES_NOT_EXIST));
-        ContactDto contactDto = contactMapper.mapContactToDto(contact);
+        ContactDto contactDto = contactMapper.mapContactToDtoFull(contact, getAllPhonesByContact(contact), getAllAddressesByContact(contact), getAllEmails(contact));
 
         contactDto.addresses = contact.getAddresses().stream()
                 .map(addressMapper::mapAddressToDto)
@@ -83,9 +88,9 @@ public class ContactService {
         contactRepository.deleteById(id);
     }
 
-    public List<ContactDto> getAllContactsByUserId(String userEmail) {
-        return contactRepository.findAllByUserEmail(userEmail).stream()
-                .map(contactMapper::mapContactToDto)
+    public List<ContactDto> getAllContactsByUserId(UserEmailDto userEmailDto) {
+        return contactRepository.findAllByUserEmail(userEmailDto.email).stream()
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
@@ -94,8 +99,8 @@ public class ContactService {
         Contact profile = user.getMyProfile();
         profile.setFirstName(contactDto.firstName);
         profile.setLastName(contactDto.lastName);
-        profile.setDescription(contactDto.description);
-        profile.setUser(user);
+        contact.setDescription(contactDto.description); 
+        contact.setUser(user);        
         user.addProfile(profile);
         contactRepository.save(profile);
     }
@@ -105,6 +110,30 @@ public class ContactService {
         newProfile.setFirstName(contactDto.firstName);
         newProfile.setLastName(contactDto.lastName);
         contactRepository.save(newProfile);
+    }
+
+    private List<PhoneDto> getAllPhonesByContact(Contact contact) {
+        return phoneRepository.findAllByContactId(contact.getId())
+                .stream()
+                .map(phoneMapper::mapPhoneToDto)
+                .collect(Collectors.toList());
+    }
+
+    private List<AddressDto> getAllAddressesByContact(Contact contact) {
+        return addressRepository.findAllByContactId(contact.getId())
+                .stream()
+                .map(addressMapper::mapAddressToDto)
+                .collect(Collectors.toList());
+    }
+
+    private ContactDto convertToDto(Contact contact) {
+        return contactMapper.mapContactToDtoFull(contact, getAllPhonesByContact(contact), getAllAddressesByContact(contact), getAllEmails(contact));
+    }
+
+    public ContactDto getProfile(UserEmailDto userEmailDto) {
+        User user = userRepository.findById(userEmailDto.email).orElseThrow(() -> new EntityNotFoundException(UserService.USER_DOES_NOT_EXIST));
+        Contact contact = user.getMyProfile();
+        return contactMapper.mapContactToDtoFull(contact, getAllPhonesByContact(contact), getAllAddressesByContact(contact), getAllEmails(contact.getId());
     }
 
     public List<String> getAllEmails(int id) {
@@ -123,5 +152,4 @@ public class ContactService {
         contact.deleteEmail(email);
         contactRepository.save(contact);
     }
-
 }

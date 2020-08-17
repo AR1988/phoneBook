@@ -147,5 +147,4 @@ class ContactServiceTest {
         verify(contactRepository, times(1)).findById(argThat(
                 id -> id.intValue() == contactDto.id));
     }
-
 }

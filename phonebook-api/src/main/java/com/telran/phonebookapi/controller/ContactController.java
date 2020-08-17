@@ -46,7 +46,7 @@ public class ContactController {
 
     @PostMapping("/all")
     public List<ContactDto> requestAllContactsByUserEmail(@Valid @RequestBody UserEmailDto userEmailDto) {
-        return contactService.getAllContactsByUserId(userEmailDto.email);
+        return contactService.getAllContactsByUserId(userEmailDto);
     }
 
     @PostMapping("/profile")
@@ -57,6 +57,11 @@ public class ContactController {
     @PutMapping("/profile")
     public void editProfile(@Valid @RequestBody ContactDto contactDto) {
         contactService.editProfile(contactDto);
+    }
+
+    @PostMapping("/get-profile")
+    public ContactDto getProfile(@Valid @RequestBody UserEmailDto userEmailDto) {
+        return contactService.getProfile(userEmailDto);
     }
 
     @PostMapping("/{id}/{email}")
@@ -72,5 +77,6 @@ public class ContactController {
     @DeleteMapping("/{id}/{email}")
     public void deleteEmail(@PathVariable int id, @PathVariable String email) {
         contactService.deleteEmail(id, email);
+
     }
 }
