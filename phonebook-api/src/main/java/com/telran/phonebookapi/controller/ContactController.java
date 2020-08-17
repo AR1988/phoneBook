@@ -74,9 +74,13 @@ public class ContactController {
         return contactService.getAllEmails(id);
     }
 
+    @PutMapping("{id}/{oldEmail}/{newEmail}")
+    public void editEmail(@PathVariable int id, @PathVariable String oldEmail, @PathVariable String newEmail) {
+        contactService.editEmail(id, oldEmail, newEmail);
+    }
+
     @DeleteMapping("/{id}/{email}")
     public void deleteEmail(@PathVariable int id, @PathVariable String email) {
         contactService.deleteEmail(id, email);
-
     }
 }

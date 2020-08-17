@@ -60,7 +60,7 @@ public class ContactService {
 
     public ContactDto getByIdFullDetails(int id) {
         Contact contact = contactRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(CONTACT_DOES_NOT_EXIST));
-        ContactDto contactDto = contactMapper.mapContactToDtoFull(contact, getAllPhonesByContact(contact), getAllAddressesByContact(contact), getAllEmails(contact));
+        ContactDto contactDto = contactMapper.mapContactToDtoFull(contact, getAllPhonesByContact(contact), getAllAddressesByContact(contact), getAllEmails(contact.getId()));
 
         contactDto.addresses = contact.getAddresses().stream()
                 .map(addressMapper::mapAddressToDto)
@@ -99,8 +99,8 @@ public class ContactService {
         Contact profile = user.getMyProfile();
         profile.setFirstName(contactDto.firstName);
         profile.setLastName(contactDto.lastName);
-        contact.setDescription(contactDto.description); 
-        contact.setUser(user);        
+        profile.setDescription(contactDto.description);
+        profile.setUser(user);
         user.addProfile(profile);
         contactRepository.save(profile);
     }
@@ -127,13 +127,13 @@ public class ContactService {
     }
 
     private ContactDto convertToDto(Contact contact) {
-        return contactMapper.mapContactToDtoFull(contact, getAllPhonesByContact(contact), getAllAddressesByContact(contact), getAllEmails(contact));
+        return contactMapper.mapContactToDtoFull(contact, getAllPhonesByContact(contact), getAllAddressesByContact(contact), getAllEmails(contact.getId()));
     }
 
     public ContactDto getProfile(UserEmailDto userEmailDto) {
         User user = userRepository.findById(userEmailDto.email).orElseThrow(() -> new EntityNotFoundException(UserService.USER_DOES_NOT_EXIST));
         Contact contact = user.getMyProfile();
-        return contactMapper.mapContactToDtoFull(contact, getAllPhonesByContact(contact), getAllAddressesByContact(contact), getAllEmails(contact.getId());
+        return contactMapper.mapContactToDtoFull(contact, getAllPhonesByContact(contact), getAllAddressesByContact(contact), getAllEmails(contact.getId()));
     }
 
     public List<String> getAllEmails(int id) {
@@ -150,6 +150,13 @@ public class ContactService {
     public void deleteEmail(int id, String email) {
         Contact contact = contactRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(CONTACT_DOES_NOT_EXIST));
         contact.deleteEmail(email);
+        contactRepository.save(contact);
+    }
+
+    public void editEmail(int id, String oldEmail, String newEmail) {
+        Contact contact = contactRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(CONTACT_DOES_NOT_EXIST));
+        contact.addEmail(newEmail);
+        contact.deleteEmail(oldEmail);
         contactRepository.save(contact);
     }
 }
