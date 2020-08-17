@@ -94,6 +94,8 @@ public class ContactService {
         Contact profile = user.getMyProfile();
         profile.setFirstName(contactDto.firstName);
         profile.setLastName(contactDto.lastName);
+        profile.setDescription(contactDto.description);
+        profile.setUser(user);
         user.addProfile(profile);
         contactRepository.save(profile);
     }
@@ -104,4 +106,22 @@ public class ContactService {
         newProfile.setLastName(contactDto.lastName);
         contactRepository.save(newProfile);
     }
+
+    public List<String> getAllEmails(int id) {
+        Contact contact = contactRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(CONTACT_DOES_NOT_EXIST));
+        return contact.getEmails();
+    }
+
+    public void addEmail(int id, String email) {
+        Contact contact = contactRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(CONTACT_DOES_NOT_EXIST));
+        contact.addEmail(email);
+        contactRepository.save(contact);
+    }
+
+    public void deleteEmail(int id, String email) {
+        Contact contact = contactRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(CONTACT_DOES_NOT_EXIST));
+        contact.deleteEmail(email);
+        contactRepository.save(contact);
+    }
+
 }

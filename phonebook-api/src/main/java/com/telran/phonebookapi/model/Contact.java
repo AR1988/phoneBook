@@ -1,6 +1,5 @@
 package com.telran.phonebookapi.model;
 
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,6 +25,7 @@ public class Contact {
     private String lastName;
     @Setter
     private String description;
+    @Setter
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
@@ -68,5 +68,8 @@ public class Contact {
         return Collections.unmodifiableList(emails);
     }
 
+    public void deleteEmail(String email) {
+        emails.remove(email);
+    }
 }
 
