@@ -42,5 +42,4 @@ public class AddressController {
     public List<AddressDto> getAllAddresses(@PathVariable int contactId) {
         return addressService.getAllAddressesByContactId(contactId);
     }
-
 }

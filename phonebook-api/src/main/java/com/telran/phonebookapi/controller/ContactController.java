@@ -63,4 +63,20 @@ public class ContactController {
     public ContactDto getProfile(@Valid @RequestBody UserEmailDto userEmailDto) {
         return contactService.getProfile(userEmailDto);
     }
+
+    @PostMapping("/{id}/{email}")
+    public void addEmail(@PathVariable int id, @PathVariable String email) {
+        contactService.addEmail(id, email);
+    }
+
+    @GetMapping("/{id}/emails")
+    public List<String> requestAllEmailByContactId(@PathVariable int id) {
+        return contactService.getAllEmails(id);
+    }
+
+    @DeleteMapping("/{id}/{email}")
+    public void deleteEmail(@PathVariable int id, @PathVariable String email) {
+        contactService.deleteEmail(id, email);
+
+    }
 }

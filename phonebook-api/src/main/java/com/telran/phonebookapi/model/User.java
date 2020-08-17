@@ -30,7 +30,6 @@ public class User {
     public User(String email, String password) {
         this.email = email;
         this.password = password;
-        contacts.add(new Contact());
     }
 
     public void addContact(Contact contact) {

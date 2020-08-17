@@ -111,7 +111,7 @@ public class ContactService {
         newProfile.setLastName(contactDto.lastName);
         contactRepository.save(newProfile);
     }
-  
+
     private List<PhoneDto> getAllPhonesByContact(Contact contact) {
         return phoneRepository.findAllByContactId(contact.getId())
                 .stream()
@@ -125,10 +125,6 @@ public class ContactService {
                 .map(addressMapper::mapAddressToDto)
                 .collect(Collectors.toList());
     }
-  
-    private List<String> getAllEmails(Contact contact) {
-      
-    }
 
     private ContactDto convertToDto(Contact contact) {
         return contactMapper.mapContactToDtoFull(contact, getAllPhonesByContact(contact), getAllAddressesByContact(contact), getAllEmails(contact));
@@ -137,6 +133,23 @@ public class ContactService {
     public ContactDto getProfile(UserEmailDto userEmailDto) {
         User user = userRepository.findById(userEmailDto.email).orElseThrow(() -> new EntityNotFoundException(UserService.USER_DOES_NOT_EXIST));
         Contact contact = user.getMyProfile();
-        return contactMapper.mapContactToDtoFull(contact, getAllPhonesByContact(contact), getAllAddressesByContact(contact), getAllEmails(contact));
+        return contactMapper.mapContactToDtoFull(contact, getAllPhonesByContact(contact), getAllAddressesByContact(contact), getAllEmails(contact.getId());
+    }
+
+    public List<String> getAllEmails(int id) {
+        Contact contact = contactRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(CONTACT_DOES_NOT_EXIST));
+        return contact.getEmails();
+    }
+
+    public void addEmail(int id, String email) {
+        Contact contact = contactRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(CONTACT_DOES_NOT_EXIST));
+        contact.addEmail(email);
+        contactRepository.save(contact);
+    }
+
+    public void deleteEmail(int id, String email) {
+        Contact contact = contactRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(CONTACT_DOES_NOT_EXIST));
+        contact.deleteEmail(email);
+        contactRepository.save(contact);
     }
 }

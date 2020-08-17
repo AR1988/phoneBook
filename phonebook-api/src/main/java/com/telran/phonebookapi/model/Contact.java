@@ -1,6 +1,5 @@
 package com.telran.phonebookapi.model;
 
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -69,5 +68,8 @@ public class Contact {
         return Collections.unmodifiableList(emails);
     }
 
+    public void deleteEmail(String email) {
+        emails.remove(email);
+    }
 }
 
