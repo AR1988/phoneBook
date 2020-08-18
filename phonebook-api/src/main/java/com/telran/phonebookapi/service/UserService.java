@@ -11,9 +11,11 @@ import com.telran.phonebookapi.persistance.IContactRepository;
 import com.telran.phonebookapi.persistance.IRecoveryTokenRepository;
 import com.telran.phonebookapi.persistance.IUserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.NoResultException;
 import java.util.UUID;
 
 @Service
@@ -106,6 +108,17 @@ public class UserService {
         ourUser.setPassword(encryptedPassword);
         userRepository.save(ourUser);
         recoveryTokenRepository.delete(token);
+    }
+
+    public String getUsername() {
+        UserDetails userDetails = (UserDetails) new org.springframework.security.core.context
+                .SecurityContextHolder().getContext()
+                .getAuthentication().getPrincipal();
+        try {
+            return userDetails.getUsername();
+        } catch (NoResultException e){
+            return null;
+        }
     }
 
 }
