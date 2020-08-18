@@ -49,5 +49,6 @@ public class UserController {
         bumbum.put("bum", "bam");
         return new ResponseEntity<>(bumbum, HttpStatus.OK);
     }
+
 }
 

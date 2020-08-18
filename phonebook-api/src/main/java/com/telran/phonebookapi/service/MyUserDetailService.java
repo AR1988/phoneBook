@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -28,7 +29,11 @@ public class MyUserDetailService implements UserDetailsService {
         User user = userRepository.findById(username).orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND));
 
         List<SimpleGrantedAuthority> authorities =
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getUserRole()));
+                user.getRoles()
+                        .stream()
+                        .map(role -> new SimpleGrantedAuthority(role.getRole()))
+                        .collect(Collectors.toList());
+              //  Collections.singletonList(new SimpleGrantedAuthority(user.getUserRole()));
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),

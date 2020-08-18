@@ -1,6 +1,7 @@
 package com.telran.phonebookapi.dto;
 
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -15,7 +16,6 @@ public class UserDto {
                    String password) {
         this.email = email;
         this.password = password;
-
     }
 
     @Email(message = "Please, check entered email is correct",
@@ -27,6 +27,10 @@ public class UserDto {
     @NotBlank
     public String password;
 
+    public String userRole;
+
     public List<ContactDto> contactDtos = new ArrayList<>();
+
+    public ContactDto myProfile;
 
 }

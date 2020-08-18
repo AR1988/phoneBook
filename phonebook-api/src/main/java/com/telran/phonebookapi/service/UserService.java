@@ -4,10 +4,8 @@ import com.telran.phonebookapi.dto.UserDto;
 import com.telran.phonebookapi.exception.TokenNotFoundException;
 import com.telran.phonebookapi.exception.UserAlreadyExistsException;
 import com.telran.phonebookapi.exception.UserNotFoundException;
-import com.telran.phonebookapi.model.ActivationToken;
-import com.telran.phonebookapi.model.Contact;
-import com.telran.phonebookapi.model.RecoveryToken;
-import com.telran.phonebookapi.model.User;
+import com.telran.phonebookapi.mapper.UserMapper;
+import com.telran.phonebookapi.model.*;
 import com.telran.phonebookapi.persistance.IActivationTokenRepository;
 import com.telran.phonebookapi.persistance.IContactRepository;
 import com.telran.phonebookapi.persistance.IRecoveryTokenRepository;
@@ -39,18 +37,21 @@ public class UserService {
     private final IRecoveryTokenRepository recoveryTokenRepository;
     private final EmailSender emailSender;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    UserMapper userMapper;
 
     public UserService(IUserRepository userRepository, IContactRepository contactRepository,
                        IActivationTokenRepository activationTokenRepository,
                        EmailSender emailSender,
                        IRecoveryTokenRepository recoveryTokenRepository,
-                       BCryptPasswordEncoder bCryptPasswordEncoder) {
+                       BCryptPasswordEncoder bCryptPasswordEncoder,
+                       UserMapper userMapper) {
         this.userRepository = userRepository;
         this.contactRepository = contactRepository;
         this.activationTokenRepository = activationTokenRepository;
         this.emailSender = emailSender;
         this.recoveryTokenRepository = recoveryTokenRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.userMapper = userMapper;
     }
 
     public void addUser(UserDto userDto) {
@@ -61,6 +62,10 @@ public class UserService {
             String encodedPassword = bCryptPasswordEncoder.encode(userDto.password);
             User user = new User(userDto.email, encodedPassword);
             user.setActive(false);
+            user.addRole(UserRole.USER);
+            Contact profile = new Contact();
+            user.setMyProfile(profile);
+            contactRepository.save(profile);
             userRepository.save(user);
 
             userDto.contactDtos.stream()
