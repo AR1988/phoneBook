@@ -1,6 +1,7 @@
 package com.telran.phonebookapi.dto;
 
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -25,6 +26,8 @@ public class UserDto {
     @Size(max = 20, min = 8, message = "The password is shorter than {min} or longer than {max}")
     @NotBlank
     public String password;
+
+    public String userRole;
 
     public List<ContactDto> contactDtos = new ArrayList<>();
 

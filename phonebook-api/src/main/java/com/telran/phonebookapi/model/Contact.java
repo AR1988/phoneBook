@@ -30,8 +30,8 @@ public class Contact {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @ElementCollection
-    private final List<String> emails = new ArrayList<>();
+    @OneToMany(mappedBy = "contact", cascade = CascadeType.REMOVE)
+    private final List<Email> emails = new ArrayList<>();
 
     @OneToMany(mappedBy = "contact", cascade = CascadeType.REMOVE)
     private final List<Phone> phones = new ArrayList<>();
@@ -52,7 +52,7 @@ public class Contact {
         phones.add(phone);
     }
 
-    public void addEmail(String email) {
+    public void addEmail(Email email) {
         emails.add(email);
     }
 
@@ -64,12 +64,9 @@ public class Contact {
         return Collections.unmodifiableList(addresses);
     }
 
-    public List<String> getEmails() {
+    public List<Email> getEmails() {
         return Collections.unmodifiableList(emails);
     }
 
-    public void deleteEmail(String email) {
-        emails.remove(email);
-    }
 }
 

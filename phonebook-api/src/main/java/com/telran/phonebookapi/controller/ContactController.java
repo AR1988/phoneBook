@@ -64,23 +64,4 @@ public class ContactController {
         return contactService.getProfile(userEmailDto);
     }
 
-    @PostMapping("/{id}/{email}")
-    public void addEmail(@PathVariable int id, @PathVariable String email) {
-        contactService.addEmail(id, email);
-    }
-
-    @GetMapping("/{id}/emails")
-    public List<String> requestAllEmailByContactId(@PathVariable int id) {
-        return contactService.getAllEmails(id);
-    }
-
-    @PutMapping("{id}/{oldEmail}/{newEmail}")
-    public void editEmail(@PathVariable int id, @PathVariable String oldEmail, @PathVariable String newEmail) {
-        contactService.editEmail(id, oldEmail, newEmail);
-    }
-
-    @DeleteMapping("/{id}/{email}")
-    public void deleteEmail(@PathVariable int id, @PathVariable String email) {
-        contactService.deleteEmail(id, email);
-    }
 }

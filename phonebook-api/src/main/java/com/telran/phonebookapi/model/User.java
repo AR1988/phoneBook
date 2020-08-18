@@ -6,7 +6,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity(name = "Users")
 @NoArgsConstructor
@@ -16,8 +18,8 @@ public class User {
     private String email;
     @Setter
     private String password;
-    @Setter
-    private String userRole;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<UserRole> roles = new HashSet<>();
     @Setter
     private boolean isActive;
     @OneToOne
@@ -40,19 +42,16 @@ public class User {
         this.myProfile = contact;
     }
 
-    List<Contact> getContacts() {
-        return contacts;
+    public void addRole(UserRole role) {
+        roles.add(role);
     }
 
-  /*  ArrayList<Contact> getContacts(String query) {
-        ArrayList<Contact> contacts = new ArrayList<>();
+    public void removeRole(UserRole role) {
+        roles.remove(role);
+    }
 
-        for (Contact contact : this.contacts) {
-            if (contact.firstName.contains(query) || contact.lastName.contains(query)) {
-                contacts.add(contact);
-            }
-        }
+    public List<Contact> getContacts() {
         return contacts;
-    }*/
+    }
 
 }

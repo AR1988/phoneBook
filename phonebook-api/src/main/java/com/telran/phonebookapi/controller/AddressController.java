@@ -24,7 +24,7 @@ public class AddressController {
     }
 
     @PutMapping("")
-    public void editPhone(@RequestBody @Valid AddressDto addressDto) {
+    public void editAddress(@RequestBody @Valid AddressDto addressDto) {
         addressService.editAllFields(addressDto);
     }
 

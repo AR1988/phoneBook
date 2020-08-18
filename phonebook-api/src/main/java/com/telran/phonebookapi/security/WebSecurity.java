@@ -39,7 +39,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                         UsernamePasswordAuthenticationFilter.class)
                 .addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailService))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.cors().and().csrf().disable();
     }
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
