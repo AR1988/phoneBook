@@ -50,5 +50,10 @@ public class UserController {
         return new ResponseEntity<>(bumbum, HttpStatus.OK);
     }
 
+    @GetMapping("/userid")
+    public String getUserId() {
+        return userService.getUsername();
+    }
+
 }
 
