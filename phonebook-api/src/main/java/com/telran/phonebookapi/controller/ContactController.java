@@ -1,7 +1,6 @@
 package com.telran.phonebookapi.controller;
 
 import com.telran.phonebookapi.dto.ContactDto;
-import com.telran.phonebookapi.dto.UserEmailDto;
 import com.telran.phonebookapi.service.ContactService;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,9 +43,9 @@ public class ContactController {
         contactService.removeById(id);
     }
 
-    @PostMapping("/all")
-    public List<ContactDto> requestAllContactsByUserEmail(@Valid @RequestBody UserEmailDto userEmailDto) {
-        return contactService.getAllContactsByUserId(userEmailDto);
+    @GetMapping("/all")
+    public List<ContactDto> requestAllContactsByUserEmail() {
+        return contactService.getAllContactsByUserId();
     }
 
     @PostMapping("/profile")
@@ -59,9 +58,9 @@ public class ContactController {
         contactService.editProfile(contactDto);
     }
 
-    @PostMapping("/get-profile")
-    public ContactDto getProfile(@Valid @RequestBody UserEmailDto userEmailDto) {
-        return contactService.getProfile(userEmailDto);
+    @GetMapping("/get-profile")
+    public ContactDto getProfile() {
+        return contactService.getProfile();
     }
 
 }

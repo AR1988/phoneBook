@@ -1,6 +1,8 @@
 package com.telran.phonebookapi.service;
 
 import com.telran.phonebookapi.dto.ContactDto;
+import com.telran.phonebookapi.dto.NewPasswordDto;
+import com.telran.phonebookapi.dto.RecoveryPasswordDto;
 import com.telran.phonebookapi.dto.UserDto;
 import com.telran.phonebookapi.model.Contact;
 import com.telran.phonebookapi.model.RecoveryToken;
@@ -47,10 +49,10 @@ class UserServiceTest {
     public void testSendRecoveryToken_tokenIsSavedToRepo() {
         String email = "johndoe@mail.com";
         User ourUser = new User(email, "1234");
+        RecoveryPasswordDto recoveryPasswordDto = new RecoveryPasswordDto(email);
 
         when(userRepository.findById(email)).thenReturn(Optional.of(ourUser));
-
-        userService.sendRecoveryToken(email);
+        userService.sendRecoveryToken(recoveryPasswordDto);
 
         verify(recoveryTokenRepository, times(1)).save(any());
 
@@ -68,7 +70,10 @@ class UserServiceTest {
 
         when(recoveryTokenRepository.findById(token)).thenReturn(Optional.of(recoveryToken));
 
-        userService.createNewPassword(token, "4321");
+        NewPasswordDto newPasswordDto = new NewPasswordDto();
+        newPasswordDto.token = token;
+        newPasswordDto.password = "4321";
+        userService.createNewPassword(newPasswordDto);
 
         verify(userRepository, times(1)).save(any());
 
@@ -123,7 +128,7 @@ class UserServiceTest {
         verify(userRepository, times(1)).save(argThat(user ->
                 user.getEmail().equals(userDto.email)
                         && user.getMyProfile().getFirstName().equals(userDto.myProfile.firstName) && user.getMyProfile().getLastName().equals(userDto.myProfile.lastName
-        )));
+                )));
     }
 
     @Test
@@ -150,7 +155,7 @@ class UserServiceTest {
         when(userRepository.findById(userDto.email)).thenReturn(Optional.of(user));
         userService.removeById(userDto.email);
 
-        List <User> capturedUsers = userCaptor.getAllValues();
+        List<User> capturedUsers = userCaptor.getAllValues();
         verify(userRepository, times(1)).deleteById(userDto.email);
         assertEquals(0, capturedUsers.size());
     }

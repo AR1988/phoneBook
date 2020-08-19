@@ -122,5 +122,8 @@
       }
     }
   },
-  "defaultProject": "phonebook-ui"
+  "defaultProject": "phonebook-ui",
+  "cli": {
+    "analytics": false
+  }
 }

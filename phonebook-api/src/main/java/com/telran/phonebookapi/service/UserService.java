@@ -1,6 +1,9 @@
 package com.telran.phonebookapi.service;
 
+import com.telran.phonebookapi.dto.NewPasswordDto;
+import com.telran.phonebookapi.dto.RecoveryPasswordDto;
 import com.telran.phonebookapi.dto.UserDto;
+import com.telran.phonebookapi.dto.UserEmailDto;
 import com.telran.phonebookapi.exception.TokenNotFoundException;
 import com.telran.phonebookapi.exception.UserAlreadyExistsException;
 import com.telran.phonebookapi.exception.UserNotFoundException;
@@ -11,9 +14,12 @@ import com.telran.phonebookapi.persistance.IContactRepository;
 import com.telran.phonebookapi.persistance.IRecoveryTokenRepository;
 import com.telran.phonebookapi.persistance.IUserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.NoResultException;
 import java.util.UUID;
 
 @Service
@@ -87,25 +93,34 @@ public class UserService {
         activationTokenRepository.delete(activationToken);
     }
 
-    public void sendRecoveryToken(String email) {
-        User ourUser = userRepository.findById(email).orElseThrow(() -> new UserNotFoundException(USER_DOES_NOT_EXIST));
+    public void sendRecoveryToken(RecoveryPasswordDto recoveryPasswordDto) {
+        User ourUser = userRepository.findById(recoveryPasswordDto.email).orElseThrow(() -> new UserNotFoundException(USER_DOES_NOT_EXIST));
         String token = UUID.randomUUID().toString();
         RecoveryToken recoveryToken = new RecoveryToken(token, ourUser);
         recoveryTokenRepository.save(recoveryToken);
 
         String message = RECOVER_YOUR_PASSWORD_MESSAGE + uiHost + UI_RECOVERY_LINK + token;
 
-        emailSender.sendMail(email, "Password recovery", message);
+        emailSender.sendMail(recoveryPasswordDto.email, "Password recovery", message);
     }
 
-    public void createNewPassword(String recoveryToken, String password) {
-        RecoveryToken token = recoveryTokenRepository.findById(recoveryToken).orElseThrow(() -> new TokenNotFoundException(NOT_ACTIVE_LINK));
+    public void createNewPassword(NewPasswordDto newPasswordDto) {
+        RecoveryToken token = recoveryTokenRepository.findById(newPasswordDto.token).orElseThrow(() -> new TokenNotFoundException(NOT_ACTIVE_LINK));
         User ourUser = token.getUser();
-        final String encryptedPassword = bCryptPasswordEncoder.encode(password);
+        final String encryptedPassword = bCryptPasswordEncoder.encode(newPasswordDto.password);
 
         ourUser.setPassword(encryptedPassword);
         userRepository.save(ourUser);
         recoveryTokenRepository.delete(token);
     }
 
+    public UserEmailDto getUserId() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        try {
+            return new UserEmailDto(userDetails.getUsername());
+        } catch (NoResultException e) {
+            throw new UserNotFoundException(USER_DOES_NOT_EXIST);
+        }
+    }
 }

@@ -15,6 +15,7 @@ import {ActivationComponent} from './activation/activation.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
 import {UserService} from "./service/user.service";
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import {UserService} from "./service/user.service";
     RegistrationComponent,
     ActivateEmailComponent,
     ActivationComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,

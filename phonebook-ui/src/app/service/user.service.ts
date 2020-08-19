@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core'
 import {User} from "./interface";
-import {HttpClient} from '@angular/common/http'
+import {HttpClient, HttpHeaders} from '@angular/common/http'
 
 @Injectable()
 export class UserService {
@@ -9,6 +9,7 @@ export class UserService {
   private readonly resetPasswordPath = '/api/user/password/';
   private readonly userPath = '/api/user/';
   private readonly activationPath = '/api/user/activation/';
+  private readonly login = '/api/user/login';
 
   constructor(private http: HttpClient) {
   }
@@ -31,4 +32,11 @@ export class UserService {
       token: token
     });
   }
+
+  logIn(user: User) {
+    console.log(user)
+    return this.http.post<User>(this.login, user);
+
+  }
+
 }

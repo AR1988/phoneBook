@@ -24,4 +24,6 @@ spring.flyway.user=
 spring.flyway.password=
 
 com.telran.auth.jwt.secret=
+#864000000 = 10 days
+com.telran.auth.jwt.token.expiration=864000000
 

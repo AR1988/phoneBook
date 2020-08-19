@@ -35,27 +35,32 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         String username = null;
         String jwt = null;
 
-        if (header != null && header.startsWith("Bearer ")) {
-            jwt = header.substring(7);
-            username = jwtUtil.extractUsername(jwt);
-        }
-
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-            UserDetails userDetails = this.userDetailService.loadUserByUsername(username);
-
-            if (this.jwtUtil.validateToken(jwt, userDetails)) {
-
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails, null, userDetails.getAuthorities());
-
-                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
-
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+        try {
+            if (header != null && header.startsWith("Bearer ")) {
+                jwt = header.substring(7);
+                username = jwtUtil.extractUsername(jwt);
             }
-        }
-        chain.doFilter(req, res);
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
+                UserDetails userDetails = this.userDetailService.loadUserByUsername(username);
+
+                if (this.jwtUtil.validateToken(jwt, userDetails)) {
+
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails, null, userDetails.getAuthorities());
+
+                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
+
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Cannot set user authentication: {} " + e.getMessage());
+        }
+
+        chain.doFilter(req, res);
     }
 }
+
+

@@ -1,8 +1,10 @@
 package com.telran.phonebookapi.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.telran.phonebookapi.dto.ErrorDto;
 import com.telran.phonebookapi.dto.UserDto;
 import com.telran.phonebookapi.service.JWTUtil;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,19 +36,21 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req,
                                                 HttpServletResponse res)
-            throws AuthenticationException {
+            throws AuthenticationException, IOException {
         try {
             UserDto userDto = objectMapper.readValue(req.getInputStream(), UserDto.class);
-
             Authentication auth = new UsernamePasswordAuthenticationToken(
                     userDto.email,
                     userDto.password
             );
-
             return authenticationManager.authenticate(auth);
-        } catch (IOException ignored) {
+        } catch (Exception authEx) {
+            logger.warn("Error Authenticating User {}:" + authEx.getMessage());
+            res.setStatus(401);
+            res.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            res.getWriter().println(objectMapper.writeValueAsString(new ErrorDto("Username or password is incorrect!")));
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -60,7 +64,5 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
         Cookie cookie = new Cookie("at", accessToken);
         cookie.setHttpOnly(true);
         res.addCookie(cookie);
-
-        //        res.addHeader("Authorization", "Bearer " + accessToken);
     }
 }

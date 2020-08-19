@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,7 +15,6 @@ import java.util.stream.Collectors;
 @Service
 public class MyUserDetailService implements UserDetailsService {
 
-    private static final String USER_NOT_FOUND = "User not found";
     private final IUserRepository userRepository;
 
     public MyUserDetailService(IUserRepository userRepository) {
@@ -26,14 +24,14 @@ public class MyUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findById(username).orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND));
+        User user = userRepository.findById(username).orElseThrow(() -> new UsernameNotFoundException(UserService.USER_DOES_NOT_EXIST));
 
         List<SimpleGrantedAuthority> authorities =
                 user.getRoles()
                         .stream()
                         .map(role -> new SimpleGrantedAuthority(role.getRole()))
                         .collect(Collectors.toList());
-              //  Collections.singletonList(new SimpleGrantedAuthority(user.getUserRole()));
+        //  Collections.singletonList(new SimpleGrantedAuthority(user.getUserRole()));
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),

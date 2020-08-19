@@ -5,9 +5,11 @@ import {ActivateEmailComponent} from "./activate-email/activate-email.component"
 import {ActivationComponent} from "./activation/activation.component";
 import {ForgotPasswordComponent} from "./forgot-password/forgot-password.component";
 import {PasswordRecoveryComponent} from "./password-recovery/password-recovery.component";
+import {LoginComponent} from "./login/login.component";
 
 const routes: Routes = [
   {path: '', redirectTo: 'user/registration', pathMatch: 'full'},
+  {path: 'user/login', component: LoginComponent},
   {path: 'user/registration', component: RegistrationComponent},
   {path: 'user/activate-email', component: ActivateEmailComponent},
   {path: 'user/activation/:token', component: ActivationComponent},
