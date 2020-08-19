@@ -17,9 +17,9 @@ public class EmailService {
 
     static final String EMAIL_DOES_NOT_EXIST = "Error! This email doesn't exist in our DB";
 
-    IContactRepository contactRepository;
-    IEmailRepository emailRepository;
-    EmailMapper emailMapper;
+    private final  IContactRepository contactRepository;
+    private final IEmailRepository emailRepository;
+    private final EmailMapper emailMapper;
 
     public EmailService(IContactRepository contactRepository, IEmailRepository iEmailRepository, EmailMapper emailMapper) {
         this.contactRepository = contactRepository;
@@ -41,8 +41,7 @@ public class EmailService {
 
     public EmailDto getById(int id) {
         Email email = emailRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(EMAIL_DOES_NOT_EXIST));
-        EmailDto emailDto = emailMapper.mapEmailToDto(email);
-        return emailDto;
+        return emailMapper.mapEmailToDto(email);
     }
 
     public void removeById(int id) {

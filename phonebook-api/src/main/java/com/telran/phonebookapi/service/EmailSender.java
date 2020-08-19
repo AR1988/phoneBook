@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class EmailSender {
 
     @Value("${com.telran.phonebook.email.from}")
-    String fromMail;
+    private  String fromMail;
 
     private JavaMailSender javaMailSender;
 

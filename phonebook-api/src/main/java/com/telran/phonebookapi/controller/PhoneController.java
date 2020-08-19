@@ -12,7 +12,7 @@ import java.util.List;
 @RequestMapping("/api/phone")
 public class PhoneController {
 
-    PhoneService phoneService;
+    private final PhoneService phoneService;
 
     public PhoneController(PhoneService phoneService) {
         this.phoneService = phoneService;

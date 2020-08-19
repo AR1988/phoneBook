@@ -1,7 +1,6 @@
 package com.telran.phonebookapi.dto;
 
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;

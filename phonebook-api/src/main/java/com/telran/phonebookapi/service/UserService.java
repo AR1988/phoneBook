@@ -43,7 +43,7 @@ public class UserService {
     private final IRecoveryTokenRepository recoveryTokenRepository;
     private final EmailSender emailSender;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    UserMapper userMapper;
+    final UserMapper userMapper;
 
     public UserService(IUserRepository userRepository, IContactRepository contactRepository,
                        IActivationTokenRepository activationTokenRepository,

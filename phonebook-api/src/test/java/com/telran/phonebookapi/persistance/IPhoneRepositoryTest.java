@@ -1,6 +1,5 @@
 package com.telran.phonebookapi.persistance;
 
-import com.telran.phonebookapi.model.Address;
 import com.telran.phonebookapi.model.Contact;
 import com.telran.phonebookapi.model.Phone;
 import com.telran.phonebookapi.model.User;

@@ -17,9 +17,9 @@ public class AddressService {
 
     static final String ADDRESS_DOES_NOT_EXIST = "Error! This address doesn't exist in our DB";
 
-    IContactRepository contactRepository;
-    IAddressRepository addressRepository;
-    AddressMapper addressMapper;
+    private final IContactRepository contactRepository;
+    private final IAddressRepository addressRepository;
+    private final AddressMapper addressMapper;
 
     public AddressService(IContactRepository contactRepository, IAddressRepository addressRepository, AddressMapper addressMapper) {
         this.contactRepository = contactRepository;
@@ -44,8 +44,7 @@ public class AddressService {
 
     public AddressDto getById(int id) {
         Address address = addressRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ADDRESS_DOES_NOT_EXIST));
-        AddressDto addressDto = addressMapper.mapAddressToDto(address);
-        return addressDto;
+        return addressMapper.mapAddressToDto(address);
     }
 
     public void removeById(int id) {

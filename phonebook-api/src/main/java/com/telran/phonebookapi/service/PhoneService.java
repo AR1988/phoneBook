@@ -17,9 +17,9 @@ public class PhoneService {
 
     static final String PHONE_DOES_NOT_EXIST = "Error! This phone number doesn't exist in our DB";
 
-    IContactRepository contactRepository;
-    IPhoneRepository phoneRepository;
-    PhoneMapper phoneMapper;
+    private final IContactRepository contactRepository;
+    private final IPhoneRepository phoneRepository;
+    private final PhoneMapper phoneMapper;
 
     public PhoneService(IContactRepository contactRepository, IPhoneRepository phoneRepository, PhoneMapper phoneMapper) {
         this.contactRepository = contactRepository;
@@ -42,8 +42,7 @@ public class PhoneService {
 
     public PhoneDto getById(int id) {
         Phone phone = phoneRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(PHONE_DOES_NOT_EXIST));
-        PhoneDto phoneDto = phoneMapper.mapPhoneToDto(phone);
-        return phoneDto;
+        return phoneMapper.mapPhoneToDto(phone);
     }
 
     public void removeById(int id) {

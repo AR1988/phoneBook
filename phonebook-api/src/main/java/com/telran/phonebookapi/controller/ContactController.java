@@ -12,7 +12,7 @@ import java.util.List;
 @RequestMapping("/api/contact")
 public class ContactController {
 
-    ContactService contactService;
+    private final ContactService contactService;
 
     public ContactController(ContactService contactService) {
         this.contactService = contactService;

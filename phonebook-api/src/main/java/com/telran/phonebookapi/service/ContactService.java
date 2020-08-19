@@ -1,6 +1,9 @@
 package com.telran.phonebookapi.service;
 
-import com.telran.phonebookapi.dto.*;
+import com.telran.phonebookapi.dto.AddressDto;
+import com.telran.phonebookapi.dto.ContactDto;
+import com.telran.phonebookapi.dto.EmailDto;
+import com.telran.phonebookapi.dto.PhoneDto;
 import com.telran.phonebookapi.exception.UserNotFoundException;
 import com.telran.phonebookapi.mapper.AddressMapper;
 import com.telran.phonebookapi.mapper.ContactMapper;
@@ -24,15 +27,15 @@ public class ContactService {
     static final String CONTACT_DOES_NOT_EXIST = "Error! This contact doesn't exist in our DB";
     private static final String USER_DOES_NOT_EXIST = "User not Found";
 
-    IUserRepository userRepository;
-    IContactRepository contactRepository;
-    IAddressRepository addressRepository;
-    IPhoneRepository phoneRepository;
-    IEmailRepository emailRepository;
-    ContactMapper contactMapper;
-    AddressMapper addressMapper;
-    PhoneMapper phoneMapper;
-    EmailMapper emailMapper;
+    private final IUserRepository userRepository;
+    private final IContactRepository contactRepository;
+    private final IAddressRepository addressRepository;
+    private final IPhoneRepository phoneRepository;
+    private final IEmailRepository emailRepository;
+    private final ContactMapper contactMapper;
+    private final AddressMapper addressMapper;
+    private final PhoneMapper phoneMapper;
+    private final EmailMapper emailMapper;
 
     public ContactService(IUserRepository userRepository, IContactRepository contactRepository, IAddressRepository addressRepository, IPhoneRepository phoneRepository, IEmailRepository emailRepository, ContactMapper contactMapper, AddressMapper addressMapper, PhoneMapper phoneMapper, EmailMapper emailMapper) {
         this.userRepository = userRepository;
@@ -147,13 +150,13 @@ public class ContactService {
             throw new EntityNotFoundException(CONTACT_DOES_NOT_EXIST);
         return contactMapper.mapContactToDtoFull(contact, getAllPhonesByContact(contact), getAllAddressesByContact(contact), getAllEmailsByContact(contact));
     }
-    
+
     private String getUsername() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
         try {
             return userDetails.getUsername();
-        } catch (NoResultException e){
+        } catch (NoResultException e) {
             throw new UserNotFoundException(USER_DOES_NOT_EXIST);
         }
     }

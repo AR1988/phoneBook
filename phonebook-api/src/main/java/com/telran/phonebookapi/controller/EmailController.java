@@ -12,7 +12,7 @@ import java.util.List;
 @RequestMapping("/api/email")
 public class EmailController {
 
-    EmailService emailService;
+    private final EmailService emailService;
 
     public EmailController(EmailService emailService) {
         this.emailService = emailService;

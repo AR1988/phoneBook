@@ -6,11 +6,11 @@ import com.telran.phonebookapi.model.Contact;
 import com.telran.phonebookapi.model.User;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AddressMapperTest {
 
-    AddressMapper addressMapper = new AddressMapper();
+    private final AddressMapper addressMapper = new AddressMapper();
 
     @Test
     void AddressDto() {
