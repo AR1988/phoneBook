@@ -5,21 +5,24 @@ import com.telran.phonebookapi.model.Contact;
 import com.telran.phonebookapi.model.User;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ContactMapperTest {
 
     ContactMapper contactMapper = new ContactMapper();
 
+    //TODO
     @Test
     void ContactDto() {
         User user = new User("test@gmail.com", "112233");
         Contact contact = new Contact("Name", user);
 
-        ContactDto contactDto = new ContactDto(1, "Name", "LastName", "Description", "test@gmail.com");
+        ContactDto contactDto = new ContactDto(contact.getId(), "Name", "LastName", "Description");
 
         ContactDto contactDtoMapped = contactMapper.mapContactToDto(contact);
-        assertEquals(contactDto.userId, contactDtoMapped.userId);
+        assertEquals(contactDto.id, contactDtoMapped.id);
         assertEquals(contactDto.firstName, contactDtoMapped.firstName);
+        assertEquals(contactDto.lastName, contactDtoMapped.lastName);
+        assertEquals(contactDto.description, contactDtoMapped.description);
     }
 }
