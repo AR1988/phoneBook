@@ -44,5 +44,10 @@ public class UserController {
     public UserEmailDto getUserId() {
         return userService.getUserId();
     }
+
+    @DeleteMapping("/user")
+    public void removeUser() {
+        userService.removeUser();
+    }
 }
 

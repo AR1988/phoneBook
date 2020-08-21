@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
 import java.util.UUID;
@@ -71,12 +72,10 @@ public class UserService {
             user.addRole(UserRole.USER);
             Contact profile = new Contact();
             user.setMyProfile(profile);
+
             contactRepository.save(profile);
             userRepository.save(user);
-
-            userDto.contactDtos.stream()
-                    .map(contactIn -> new Contact(contactIn.firstName, user))
-                    .forEach(contactRepository::save);
+            profile.setUser(user);
 
             activationTokenRepository.save(new ActivationToken(token, user));
             emailSender.sendMail(user.getEmail(), ACTIVATION_SUBJECT, ACTIVATION_MESSAGE
@@ -114,6 +113,16 @@ public class UserService {
         recoveryTokenRepository.delete(token);
     }
 
+    @Transactional
+    public void removeUser() {
+        String userId = getUserId().email;
+
+        activationTokenRepository.deleteAllByUserEmail(userId);
+        recoveryTokenRepository.deleteAllByUserEmail(userId);
+
+        userRepository.deleteById(userId);
+    }
+
     public UserEmailDto getUserId() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
@@ -123,4 +132,5 @@ public class UserService {
             throw new UserNotFoundException(USER_DOES_NOT_EXIST);
         }
     }
+
 }

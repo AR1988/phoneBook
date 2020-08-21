@@ -13,21 +13,21 @@ import java.util.List;
 public class ContactMapper {
 
     public ContactDto mapContactToDtoFull(Contact contact, List<PhoneDto> allPhonesByContact, List<AddressDto> allAddressesByContact, List<EmailDto> allEmailsByContact) {
-        return new ContactDto(contact.getId(),
+        return new ContactDto(
+                contact.getId(),
                 contact.getFirstName(),
                 contact.getLastName(),
                 contact.getDescription(),
-                contact.getUser().getEmail(),
                 allPhonesByContact,
                 allAddressesByContact,
                 allEmailsByContact);
     }
 
     public ContactDto mapContactToDto(Contact contact) {
-        return new ContactDto(contact.getId(),
+        return new ContactDto(
+                contact.getId(),
                 contact.getFirstName(),
                 contact.getLastName(),
-                contact.getDescription(),
-                contact.getUser().getEmail());
+                contact.getDescription());
     }
 }

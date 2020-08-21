@@ -16,10 +16,10 @@ public class JWTUtil {
     private static final Logger logger = LoggerFactory.getLogger(JWTUtil.class);
 
     @Value("${com.telran.auth.jwt.secret}")
-    private String jwtSecret;
+    public String jwtSecret;
 
     @Value("${com.telran.auth.jwt.token.expiration}")
-    private long expiration;
+    public long expiration;
 
     public String generateAccessToken(String email) {
         Date date = new Date(System.currentTimeMillis() + expiration);

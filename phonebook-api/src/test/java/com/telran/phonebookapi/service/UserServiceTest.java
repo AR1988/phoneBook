@@ -1,13 +1,12 @@
 package com.telran.phonebookapi.service;
 
-import com.telran.phonebookapi.dto.ContactDto;
 import com.telran.phonebookapi.dto.NewPasswordDto;
 import com.telran.phonebookapi.dto.RecoveryPasswordDto;
 import com.telran.phonebookapi.dto.UserDto;
-import com.telran.phonebookapi.model.Contact;
 import com.telran.phonebookapi.model.RecoveryToken;
 import com.telran.phonebookapi.model.User;
 import com.telran.phonebookapi.persistance.IActivationTokenRepository;
+import com.telran.phonebookapi.persistance.IContactRepository;
 import com.telran.phonebookapi.persistance.IRecoveryTokenRepository;
 import com.telran.phonebookapi.persistance.IUserRepository;
 import org.junit.jupiter.api.Test;
@@ -17,14 +16,13 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -64,36 +62,46 @@ class UserServiceTest {
 
     @Test
     public void testCreateNewPassword_newPasswordIsSaved() {
-        User ourUser = new User("johndoe@mail.com", "1234");
+        User ourUser = new User("johndoe@mail.com", "12345678");
+        ourUser.setActive(true);
         String token = UUID.randomUUID().toString();
         RecoveryToken recoveryToken = new RecoveryToken(token, ourUser);
-
         when(recoveryTokenRepository.findById(token)).thenReturn(Optional.of(recoveryToken));
-
+        when(bCryptPasswordEncoder.encode("4321")).thenReturn("4321Encoded");
         NewPasswordDto newPasswordDto = new NewPasswordDto();
-        newPasswordDto.token = token;
         newPasswordDto.password = "4321";
+        newPasswordDto.token = token;
         userService.createNewPassword(newPasswordDto);
-
+        verify(userRepository, times(1)).save(userArgumentCaptor.capture());
         verify(userRepository, times(1)).save(any());
-
-        verify(userRepository, times(1)).save(argThat(user ->
-                user.getPassword().equals("4321")));
-
         verify(recoveryTokenRepository, times(1)).findById(token);
+        verify(recoveryTokenRepository, times(1)).delete(any());
+        User capturedUser = userArgumentCaptor.getValue();
+        assertEquals("4321Encoded", capturedUser.getPassword());
     }
+
+    @Captor
+    ArgumentCaptor<User> userArgumentCaptor;
+    @Mock
+    BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Mock
+    IContactRepository contactRepository;
 
     @Test
     public void testAdd_user_passesToRepo() {
-
-        UserDto userDto = new UserDto("ivanov@gmail.com", "12345");
-
+        UserDto userDto = new UserDto("ivanov@gmail.com", "12345678");
+        when(bCryptPasswordEncoder.encode("12345678")).thenReturn("87654321");
         userService.addUser(userDto);
-
+        verify(userRepository).save(userArgumentCaptor.capture());
+        List<User> capturedUsers = userArgumentCaptor.getAllValues();
+        assertEquals(1, capturedUsers.size());
+        User capturedUser = capturedUsers.get(0);
+        assertEquals(userDto.email, capturedUser.getEmail());
+        assertEquals("87654321", capturedUser.getPassword());
         verify(userRepository, times(1)).save(any());
         verify(userRepository, times(1)).save(argThat(user ->
                 user.getEmail().equals(userDto.email)
-                        && user.getPassword().equals(userDto.password)
+                        && user.getPassword().equals("87654321")
         ));
         verify(activationTokenRepository, times(1)).save(any());
         verify(activationTokenRepository, times(1)).save(argThat(token ->
@@ -102,8 +110,10 @@ class UserServiceTest {
         verify(emailSender, times(1)).sendMail(eq(userDto.email),
                 eq(UserService.ACTIVATION_SUBJECT),
                 anyString());
+
     }
-//TODO
+
+    //TODO
     @Test
     public void testEditAllFields_userExist_AllFieldsChanged() {
 
@@ -130,7 +140,7 @@ class UserServiceTest {
 //                        && user.getMyProfile().getFirstName().equals(userDto.myProfile.firstName) && user.getMyProfile().getLastName().equals(userDto.myProfile.lastName
 //                )));
     }
-//TODO
+    //TODO
 //    @Test
 //    public void testEditAny_userDoesNotExist_EntityNotFoundException() {
 //
@@ -144,21 +154,21 @@ class UserServiceTest {
 
     @Captor
     ArgumentCaptor<User> userCaptor;
-//TODO
-    @Test
-    public void testRemoveById_userExists_UserDeleted() {
-
+    //TODO
+//    @Test
+//    public void testRemoveById_userExists_UserDeleted() {
+//
 //        User user = new User("test@gmail.com", "12345678");
 //
 //        UserDto userDto = new UserDto(user.getEmail(), user.getPassword());
-//
 //        when(userRepository.findById(userDto.email)).thenReturn(Optional.of(user));
-//        userService.removeById(userDto.email);
+//        when(userService.getUserId()).thenReturn(new UserEmailDto(user.getEmail()));
+//        userService.removeUser();
 //
 //        List<User> capturedUsers = userCaptor.getAllValues();
 //        verify(userRepository, times(1)).deleteById(userDto.email);
 //        assertEquals(0, capturedUsers.size());
-    }
+//    }
 
 }
 

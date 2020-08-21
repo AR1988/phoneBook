@@ -47,6 +47,11 @@ public class ContactController {
     public List<ContactDto> requestAllContactsByUserEmail() {
         return contactService.getAllContactsByUserId();
     }
+    //For test
+    @GetMapping("/count")
+    public int countContacts() {
+        return contactService.countContact();
+    }
 
     @PostMapping("/profile")
     public void addProfile(@Valid @RequestBody ContactDto contactDto) {
@@ -61,6 +66,12 @@ public class ContactController {
     @GetMapping("/get-profile")
     public ContactDto getProfile() {
         return contactService.getProfile();
+    }
+
+    //For tests
+    @GetMapping("/last")
+    public ContactDto getLast() {
+        return contactService.getLastCreatedContactByUser();
     }
 
 }

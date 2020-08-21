@@ -18,19 +18,16 @@ public class ContactDto {
 
     public String description;
 
-    public String userId;
-
     public List<PhoneDto> phoneNumbers = new ArrayList<>();
 
     public List<AddressDto> addresses = new ArrayList<>();
 
     public List<EmailDto> emails = new ArrayList<>();
 
-    public ContactDto(int id, String firstName, String lastName, String description, String userId) {
+    public ContactDto(int id, String firstName, String lastName, String description) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.description = description;
-        this.userId = userId;
     }
 }
