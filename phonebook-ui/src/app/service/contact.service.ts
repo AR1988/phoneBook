@@ -9,7 +9,7 @@ import {Observable} from "rxjs";
 })
 export class ContactService {
   contacts: Observable<Contact[]>;
-  private readonly contactPath = '/api/contact/all';
+  private readonly contactPath = '/api/contact';
 
   constructor(private http: HttpClient) {
   }
@@ -22,14 +22,11 @@ export class ContactService {
   }
 
   private reload(): void {
-    this.contacts = this.http.get<Contact[]>(this.contactPath);
+    this.contacts = this.http.get<Contact[]>(`${this.contactPath}/all`);
   }
 
-  getContacts() {
-    return this.http.get<Contact>(`${this.contactPath}`);
-  }
 
   removeContact(id: number) {
-    return this.http.delete(`${this.contactPath}/${id}`);
+    return this.http.delete(`${this.contactPath}/${id}`).subscribe(_ => this.reload());
   }
 }

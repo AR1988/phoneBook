@@ -5,11 +5,11 @@
       <h2>Welcome John Smith</h2>
     </div>
   </section>
-  <div class="card" *ngFor="let contact of contactService.getAll() | async">
+  <div class="card" *ngFor="let contact of contactService.contacts | async">
     <div class="card-body">
       <div class="row">
         <div class="col-8 border-right">
-          <h4>{{contact.lastName}} {{contact}}</h4>
+          <h4>{{contact.lastName}} {{contact.firstName}}</h4>
         </div>
         <div class="col-4">
           <div class="btn-group btn-block">

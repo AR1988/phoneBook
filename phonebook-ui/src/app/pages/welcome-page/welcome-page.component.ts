@@ -12,7 +12,7 @@ export class WelcomePageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    this.contactService.getAll();
   }
 
   onClickRemove(id: number) {
