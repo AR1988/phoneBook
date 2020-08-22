@@ -9,10 +9,7 @@ import com.telran.phonebookapi.exception.UserAlreadyExistsException;
 import com.telran.phonebookapi.exception.UserNotFoundException;
 import com.telran.phonebookapi.mapper.UserMapper;
 import com.telran.phonebookapi.model.*;
-import com.telran.phonebookapi.persistance.IActivationTokenRepository;
-import com.telran.phonebookapi.persistance.IContactRepository;
-import com.telran.phonebookapi.persistance.IRecoveryTokenRepository;
-import com.telran.phonebookapi.persistance.IUserRepository;
+import com.telran.phonebookapi.persistance.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,19 +39,21 @@ public class UserService {
     private final IContactRepository contactRepository;
     private final IActivationTokenRepository activationTokenRepository;
     private final IRecoveryTokenRepository recoveryTokenRepository;
+    private final IEmailRepository emailRepository;
     private final EmailSender emailSender;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     final UserMapper userMapper;
 
     public UserService(IUserRepository userRepository, IContactRepository contactRepository,
                        IActivationTokenRepository activationTokenRepository,
-                       EmailSender emailSender,
+                       IEmailRepository emailRepository, EmailSender emailSender,
                        IRecoveryTokenRepository recoveryTokenRepository,
                        BCryptPasswordEncoder bCryptPasswordEncoder,
                        UserMapper userMapper) {
         this.userRepository = userRepository;
         this.contactRepository = contactRepository;
         this.activationTokenRepository = activationTokenRepository;
+        this.emailRepository = emailRepository;
         this.emailSender = emailSender;
         this.recoveryTokenRepository = recoveryTokenRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -72,10 +71,12 @@ public class UserService {
             user.addRole(UserRole.USER);
             Contact profile = new Contact();
             user.setMyProfile(profile);
+            profile.setDescription("My profile");
 
             contactRepository.save(profile);
             userRepository.save(user);
-            profile.setUser(user);
+            Email email = new Email(user.getEmail(), profile);
+            emailRepository.save(email);
 
             activationTokenRepository.save(new ActivationToken(token, user));
             emailSender.sendMail(user.getEmail(), ACTIVATION_SUBJECT, ACTIVATION_MESSAGE
