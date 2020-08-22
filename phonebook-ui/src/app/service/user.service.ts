@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core'
 import {User} from "./interface";
 import {HttpClient, HttpHeaders} from '@angular/common/http'
+import {Observable} from "rxjs";
 
 @Injectable()
 export class UserService {
@@ -10,6 +11,8 @@ export class UserService {
   private readonly userPath = '/api/user/';
   private readonly activationPath = '/api/user/activation/';
   private readonly login = '/api/user/login';
+  private readonly testEndPoint = '/api/test/test-1';
+  private readonly getUserEndPoint = '/api/get-user';
 
   constructor(private http: HttpClient) {
   }
@@ -33,10 +36,25 @@ export class UserService {
     });
   }
 
-  logIn(user: User) {
-    console.log(user)
-    return this.http.post<User>(this.login, user);
+
+  private headers: HttpHeaders;
+
+  logIn(user: User): Observable<any> {
+    this.headers = new HttpHeaders({
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Credentials": "true"
+    });
+
+    return this.http.post<any>(this.login, user,
+      {headers: this.headers, withCredentials: true});
 
   }
 
+  getUser() {
+    return this.http.get(this.getUserEndPoint);
+  }
+
+  getTest() {
+    return this.http.get(this.testEndPoint);
+  }
 }

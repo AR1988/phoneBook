@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {FormGroup, FormBuilder, Validators} from '@angular/forms';
-import {ActivatedRoute, Router} from "@angular/router";
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Router} from "@angular/router";
 import {ConfirmedValidator} from "./confirmed.validator";
 import {UserService} from "../service/user.service";
 import {HttpErrorResponse} from "@angular/common/http";
@@ -38,6 +38,9 @@ export class RegistrationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.userService.getUser().subscribe(value => console.log(value), error1 => console.log(error1))
+    this.userService.getTest().subscribe(value => console.log(value), error1 => console.log(error1))
+
   }
 
   onSubmit() {
