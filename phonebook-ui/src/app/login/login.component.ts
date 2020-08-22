@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit {
 
     this.userService.logIn(this.form.value)
       .subscribe(value => {
-          this.router.navigate(['user/activate-email']);
+          this.router.navigate(['user/home']);
         },
         err => {
           this.errorMessage = err.error.message;

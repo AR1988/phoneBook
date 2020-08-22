@@ -16,6 +16,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
 import {UserService} from "./service/user.service";
 import { LoginComponent } from './login/login.component';
+import { WelcomePageComponent } from './pages/welcome-page/welcome-page.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { LoginComponent } from './login/login.component';
     ActivateEmailComponent,
     ActivationComponent,
     LoginComponent,
+    WelcomePageComponent,
   ],
   imports: [
     BrowserModule,
