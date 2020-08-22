@@ -31,36 +31,31 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest req,
                                     HttpServletResponse res,
                                     FilterChain chain) throws IOException, ServletException {
-        String header = req.getHeader("Authorization");
-
-        String username = null;
-        String jwt = null;
-
         try {
-            if (header != null && header.startsWith("Bearer ")) {
-                jwt = header.substring(7);
-                username = jwtUtil.extractUsername(jwt);
-            }
+            String jwt = getJwtFromCookie(req);
+            String username = jwtUtil.extractUsername(jwt);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
                 UserDetails userDetails = this.userDetailService.loadUserByUsername(username);
-
                 if (this.jwtUtil.validateToken(jwt, userDetails)) {
-
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails, null, userDetails.getAuthorities());
-
                     usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
-
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 }
             }
         } catch (Exception e) {
-            logger.error("Cannot set user authentication: {} " + e.getMessage());
+            logger.error("Cannot set user authentication: " + e.getMessage());
         }
-
         chain.doFilter(req, res);
+    }
+
+    private String getJwtFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies)
+            if (jwtUtil.getaTokenName().equals(cookie.getName()))
+                return cookie.getValue();
+        return null;
     }
 }
 

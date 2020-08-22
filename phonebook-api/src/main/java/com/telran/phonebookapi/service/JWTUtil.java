@@ -5,21 +5,26 @@ import io.jsonwebtoken.impl.DefaultClaims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpCookie;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Date;
 
 @Service
 public class JWTUtil {
     private static final Logger logger = LoggerFactory.getLogger(JWTUtil.class);
 
-    @Value("${com.telran.auth.jwt.secret}")
-    public String jwtSecret;
-
-    @Value("${com.telran.auth.jwt.token.expiration}")
-    public long expiration;
+    @Value("${com.telran.auth.token.secret}")
+    private String jwtSecret;
+    @Value("${com.telran.auth.auth.token.expiration}")
+    private long expiration;
+    @Value("${com.telran.auth.auth.token.accessTokenCookieName}")
+    private String accessTokenCookieName;
 
     public String generateAccessToken(String email) {
         Date date = new Date(System.currentTimeMillis() + expiration);
@@ -50,7 +55,7 @@ public class JWTUtil {
         return claims.getExpiration();
     }
 
-   private Claims parseToken(String token) {
+    private Claims parseToken(String token) {
         return Jwts
                 .parser()
                 .setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8))
@@ -81,5 +86,18 @@ public class JWTUtil {
         }
 
         return false;
+    }
+
+    public HttpCookie createRefreshTokenCookie(String token) {
+        LocalTime expirationTime = LocalTime.now().plusSeconds(expiration / 1000);
+        return ResponseCookie.from(accessTokenCookieName, token)
+                .httpOnly(true)
+                .maxAge(Duration.between(LocalTime.now(), expirationTime))
+                .path("/")
+                .build();
+    }
+
+    public String getaTokenName() {
+        return accessTokenCookieName;
     }
 }

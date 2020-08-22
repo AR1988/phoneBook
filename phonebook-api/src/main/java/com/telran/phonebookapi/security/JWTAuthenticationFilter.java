@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.telran.phonebookapi.dto.ErrorDto;
 import com.telran.phonebookapi.dto.UserDto;
 import com.telran.phonebookapi.service.JWTUtil;
+import org.springframework.http.HttpCookie;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -60,9 +63,6 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
                                             Authentication auth) {
 
         String accessToken = jwtUtil.generateAccessToken(((User) auth.getPrincipal()).getUsername());
-
-        Cookie cookie = new Cookie("at", accessToken);
-        cookie.setHttpOnly(true);
-        res.addCookie(cookie);
+        res.addHeader(HttpHeaders.SET_COOKIE, jwtUtil.createRefreshTokenCookie(accessToken).toString());
     }
 }

@@ -23,7 +23,13 @@ spring.flyway.locations=classpath:db/migration
 spring.flyway.user=
 spring.flyway.password=
 
-com.telran.auth.jwt.secret=
-#864000000 = 10 days
-com.telran.auth.jwt.token.expiration=864000000
+com.telran.auth.token.secret=secret
+#864000000 10 days
+#3600000 1 hour
+#600000 10 min
+#300000 5 min
+#60000 1 min
+#com.telran.auth.auth.token.expiration=864000000
+com.telran.auth.auth.token.expiration=3600000
+com.telran.auth.auth.token.accessTokenCookieName=at
 
