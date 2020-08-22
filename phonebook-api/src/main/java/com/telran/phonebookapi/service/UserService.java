@@ -75,6 +75,7 @@ public class UserService {
 
             contactRepository.save(profile);
             userRepository.save(user);
+            profile.setUser(user);
             Email email = new Email(user.getEmail(), profile);
             emailRepository.save(email);
 
