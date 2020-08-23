@@ -11,12 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 public class UserDto {
 
-    public UserDto(String email,
-                   String password) {
-        this.email = email;
-        this.password = password;
-    }
-
     @Email(message = "Please, check entered email is correct",
             regexp = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,10}$")
     @NotBlank
@@ -28,8 +22,15 @@ public class UserDto {
 
     public String userRole;
 
+    public boolean isActive;
+
     public List<ContactDto> contactDtos = new ArrayList<>();
 
     public ContactDto myProfile;
 
+    public UserDto(String email, String password, boolean isActive) {
+        this.email = email;
+        this.password = password;
+        this.isActive = isActive;
+    }
 }

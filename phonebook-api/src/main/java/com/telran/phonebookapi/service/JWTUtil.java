@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.ResponseCookie;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -38,41 +37,12 @@ public class JWTUtil {
                 .compact();
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return username.equals(userDetails.getUsername())
-                && validateJwtToken(token)
-                && !isTokenExpired(token);
-    }
-
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
-
-
-    private Date extractExpiration(String token) {
-        Claims claims = parseToken(token);
-        return claims.getExpiration();
-    }
-
-    private Claims parseToken(String token) {
-        return Jwts
-                .parser()
-                .setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8))
-                .parseClaimsJws(token).getBody();
-    }
-
     public String extractUsername(String token) {
-        return parseToken(token).get("username", String.class);
-    }
-
-    private boolean validateJwtToken(String token) {
         try {
-            Jwts
+            return Jwts
                     .parser()
                     .setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8))
-                    .parseClaimsJws(token);
-            return true;
+                    .parseClaimsJws(token).getBody().get("username", String.class);
         } catch (SignatureException e) {
             logger.error("Invalid JWT signature: {}", e.getMessage());
         } catch (MalformedJwtException e) {
@@ -84,11 +54,10 @@ public class JWTUtil {
         } catch (IllegalArgumentException e) {
             logger.error("JWT claims string is empty: {}", e.getMessage());
         }
-
-        return false;
+        return null;
     }
 
-    public HttpCookie createRefreshTokenCookie(String token) {
+    public HttpCookie createAccessTokenCookie(String token) {
         LocalTime expirationTime = LocalTime.now().plusSeconds(expiration / 1000);
         return ResponseCookie.from(accessTokenCookieName, token)
                 .httpOnly(true)
@@ -97,7 +66,7 @@ public class JWTUtil {
                 .build();
     }
 
-    public String getaTokenName() {
+    public String getTokenName() {
         return accessTokenCookieName;
     }
 }

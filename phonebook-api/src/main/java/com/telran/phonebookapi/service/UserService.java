@@ -2,8 +2,8 @@ package com.telran.phonebookapi.service;
 
 import com.telran.phonebookapi.dto.NewPasswordDto;
 import com.telran.phonebookapi.dto.RecoveryPasswordDto;
+import com.telran.phonebookapi.dto.UserDetailsDto;
 import com.telran.phonebookapi.dto.UserDto;
-import com.telran.phonebookapi.dto.UserEmailDto;
 import com.telran.phonebookapi.exception.TokenNotFoundException;
 import com.telran.phonebookapi.exception.UserAlreadyExistsException;
 import com.telran.phonebookapi.exception.UserNotFoundException;
@@ -95,7 +95,8 @@ public class UserService {
     }
 
     public void sendRecoveryToken(RecoveryPasswordDto recoveryPasswordDto) {
-        User ourUser = userRepository.findById(recoveryPasswordDto.email).orElseThrow(() -> new UserNotFoundException(USER_DOES_NOT_EXIST));
+        User ourUser = userRepository.findById(recoveryPasswordDto.email)
+                .orElseThrow(() -> new UserNotFoundException(USER_DOES_NOT_EXIST));
         String token = UUID.randomUUID().toString();
         RecoveryToken recoveryToken = new RecoveryToken(token, ourUser);
         recoveryTokenRepository.save(recoveryToken);
@@ -125,11 +126,13 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    public UserEmailDto getUserId() {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
+    public UserDetailsDto getUserId() {
         try {
-            return new UserEmailDto(userDetails.getUsername());
+            UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
+                    .getAuthentication().getPrincipal();
+            User user = userRepository.findById(userDetails.getUsername())
+                    .orElseThrow(() -> new UserNotFoundException(USER_DOES_NOT_EXIST));
+            return new UserDetailsDto(user.getEmail(), user.isActive());
         } catch (NoResultException e) {
             throw new UserNotFoundException(USER_DOES_NOT_EXIST);
         }

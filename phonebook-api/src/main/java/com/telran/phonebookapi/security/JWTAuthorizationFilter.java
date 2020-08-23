@@ -34,18 +34,16 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         try {
             String jwt = getJwtFromCookie(req);
             String username = jwtUtil.extractUsername(jwt);
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = this.userDetailService.loadUserByUsername(username);
-                if (this.jwtUtil.validateToken(jwt, userDetails)) {
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                            new UsernamePasswordAuthenticationToken(
-                                    userDetails, null, userDetails.getAuthorities());
-                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
-                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                }
+            UserDetails userDetails = userDetailService.loadUserByUsername(username);
+            if (username.equals(userDetails.getUsername()) && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails, null, userDetails.getAuthorities());
+                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
+                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         } catch (Exception e) {
-            logger.error("Cannot set user authentication: " + e.getMessage());
+            logger.warn("Cannot set user authentication: " + e.getLocalizedMessage());
         }
         chain.doFilter(req, res);
     }
@@ -53,7 +51,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     private String getJwtFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies)
-            if (jwtUtil.getaTokenName().equals(cookie.getName()))
+            if (jwtUtil.getTokenName().equals(cookie.getName()))
                 return cookie.getValue();
         return null;
     }

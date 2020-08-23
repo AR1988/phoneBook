@@ -2,9 +2,10 @@ package com.telran.phonebookapi.controller;
 
 import com.telran.phonebookapi.dto.NewPasswordDto;
 import com.telran.phonebookapi.dto.RecoveryPasswordDto;
+import com.telran.phonebookapi.dto.UserDetailsDto;
 import com.telran.phonebookapi.dto.UserDto;
-import com.telran.phonebookapi.dto.UserEmailDto;
 import com.telran.phonebookapi.service.UserService;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -41,7 +42,7 @@ public class UserController {
     }
 
     @GetMapping("/get-user")
-    public UserEmailDto getUserId() {
+    public UserDetailsDto getUserId() {
         return userService.getUserId();
     }
 
