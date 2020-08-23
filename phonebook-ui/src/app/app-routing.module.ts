@@ -9,7 +9,7 @@ import {LoginComponent} from "./login/login.component";
 import {WelcomePageComponent} from "./pages/welcome-page/welcome-page.component";
 
 const routes: Routes = [
-  {path: '', redirectTo: 'user/registration', pathMatch: 'full'},
+  {path: '', redirectTo: 'user/home', pathMatch: 'full'},
   {path: 'user/login', component: LoginComponent},
   {path: 'user/registration', component: RegistrationComponent},
   {path: 'user/activate-email', component: ActivateEmailComponent},

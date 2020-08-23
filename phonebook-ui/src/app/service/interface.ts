@@ -1,5 +1,6 @@
 export interface User {
   token: string;
-  password: string
-  email: string
+  password: string;
+  email: string;
+  isActive: boolean;
 }

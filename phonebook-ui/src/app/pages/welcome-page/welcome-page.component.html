@@ -1,20 +1,32 @@
 <app-header></app-header>
 <main role="main">
-  <section class="jumbotron text-center">
-    <div class="container">
-      <h2>Welcome John Smith</h2>
+  <section class="jumbotron text-center" *ngIf="!user.isActive">
+    <div class="alert alert-danger text-center" >
+      Please confirm your email {{user.email}}!
     </div>
   </section>
-  <div class="card" *ngFor="let contact of contactService.contacts | async">
-    <div class="card-body">
-      <div class="row">
-        <div class="col-8 border-right">
-          <h4>{{contact.lastName}} {{contact.firstName}}</h4>
-        </div>
-        <div class="col-4">
-          <div class="btn-group btn-block">
-            <button class="btn btn-primary" routerLink="/detail/{{contact.id}}">Show or edit</button>
-            <button class="btn btn-danger" (click)="onClickRemove(contact.id)">Remove</button>
+
+  <div class="container">
+    <div class="card" *ngFor="let contact of contactService.getAllContacts() | async">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-10 border-right">
+            <a class="page-link shadow-sm" routerLink="/detail/{{contact.id}}">
+          <span>
+            <div class="row">
+              <div class="col-4"><p class="text text-xl-center">{{contact.lastName}}</p></div>
+              <div class="col-4"><p class="text">{{contact.firstName}}</p></div>
+              <div class="col-4"><p class="text">{{contact.description}}</p></div>
+            </div>
+
+          </span>
+            </a>
+          </div>
+          <div class="col-2">
+            <div class="btn-group btn-block">
+              <!--            <button class="btn btn-primary" routerLink="/detail/{{contact.id}}">Show or edit</button>-->
+              <button class="btn btn-danger" (click)="onClickRemove(contact.id)">Remove</button>
+            </div>
           </div>
         </div>
       </div>

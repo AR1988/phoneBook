@@ -13,10 +13,11 @@ import {RegistrationComponent} from './registration/registration.component';
 import {ActivateEmailComponent} from './activate-email/activate-email.component';
 import {ActivationComponent} from './activation/activation.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {HttpClientModule} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {UserService} from "./service/user.service";
 import { LoginComponent } from './login/login.component';
 import { WelcomePageComponent } from './pages/welcome-page/welcome-page.component';
+import {HttpErrorInterceptor} from "./service/HttpErrorInterceptor";
 
 @NgModule({
   declarations: [
@@ -39,7 +40,13 @@ import { WelcomePageComponent } from './pages/welcome-page/welcome-page.componen
     NgbModule,
     HttpClientModule,
   ],
-  providers: [UserService],
+  providers: [UserService,
+      {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
+      multi: true
+    }
+    ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

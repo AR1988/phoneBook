@@ -1,16 +1,14 @@
-<form [formGroup]="form" class="border border-light p-5" (ngSubmit)="onSubmit()">
-  <p class="h4 mb-4 text-center text-info font-weight-bold">Forgot Password</p>
-  <div class="d-flex justify-content-center">
-    <p>Enter email to reset your password.</p>
-  </div>
+<app-header></app-header>
+<form [formGroup]="form" novalidate class="border border-light p-5" (ngSubmit)="onSubmit()">
+  <p class="h4 mb-4 text-center text-info font-weight-bold">Login</p>
   <div class="form-group">
-    <input type="email" formControlName="email" class="form-control mb-2"
-           placeholder="Your e-mail address">
+    <input class="form-control mb-2" formControlName="email" placeholder="Email"
+           type="email">
   </div>
 
   <div class="form-group">
     <input type="password" formControlName="password" class="form-control mb-2"
-           placeholder="Your e-mail address">
+           placeholder="Password">
   </div>
 
   <div class="form-group">
@@ -23,8 +21,8 @@
     </div>
   </div>
 
-  <button class="btn btn-info my-4 btn-block" type="submit"
-          >Login
+  <button class="btn btn-info my-4 btn-block" type="submit" [disabled]="form.pristine || form.invalid">
+  Login
   </button>
 
   <section *ngIf="loading" class="jumbotron text-center">
@@ -32,5 +30,5 @@
       <h4>Please check your email and reset your password</h4>
     </div>
   </section>
-
 </form>
+<app-footer></app-footer>

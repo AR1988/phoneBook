@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core'
 import {User} from "./interface";
-import {HttpClient, HttpHeaders} from '@angular/common/http'
+import {HttpClient} from '@angular/common/http'
 import {Observable} from "rxjs";
+import {Router} from "@angular/router";
 
 @Injectable()
 export class UserService {
@@ -13,8 +14,9 @@ export class UserService {
   private readonly login = '/api/user/login';
   private readonly testEndPoint = '/api/test/test-1';
   private readonly getUserEndPoint = '/api/get-user';
+  public user: Observable<User>;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) {
   }
 
   newUserRegistration(user: User) {
@@ -36,22 +38,18 @@ export class UserService {
     });
   }
 
-
-  private headers: HttpHeaders;
-
   logIn(user: User): Observable<any> {
-    this.headers = new HttpHeaders({
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Credentials": "true"
-    });
-
-    return this.http.post<any>(this.login, user,
-      {headers: this.headers, withCredentials: true});
-
+    return this.http.post<any>(this.login, user)
   }
 
-  getUser() {
-    return this.http.get(this.getUserEndPoint);
+  getUser(): Observable<User> {
+    if (!this.user)
+      this.reloadUser();
+    return this.user
+  }
+
+  reloadUser() {
+    this.user = this.http.get<User>(this.getUserEndPoint);
   }
 
   getTest() {

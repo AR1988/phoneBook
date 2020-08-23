@@ -38,9 +38,6 @@ export class RegistrationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userService.getUser().subscribe(value => console.log(value), error1 => console.log(error1))
-    this.userService.getTest().subscribe(value => console.log(value), error1 => console.log(error1))
-
   }
 
   onSubmit() {

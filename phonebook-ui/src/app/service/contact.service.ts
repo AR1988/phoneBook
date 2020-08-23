@@ -2,6 +2,8 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Contact} from "./contact";
 import {Observable} from "rxjs";
+import {UserService} from "./user.service";
+import {Router} from "@angular/router";
 
 
 @Injectable({
@@ -11,10 +13,11 @@ export class ContactService {
   contacts: Observable<Contact[]>;
   private readonly contactPath = '/api/contact';
 
-  constructor(private http: HttpClient) {
+
+  constructor(private http: HttpClient, private userService: UserService, private router: Router) {
   }
 
-  getAll(): Observable<Contact[]> {
+  getAllContacts(): Observable<Contact[]> {
     if (!this.contacts) {
       this.reload();
     }
@@ -25,8 +28,7 @@ export class ContactService {
     this.contacts = this.http.get<Contact[]>(`${this.contactPath}/all`);
   }
 
-
   removeContact(id: number) {
-    return this.http.delete(`${this.contactPath}/${id}`).subscribe(_ => this.reload());
+    return this.http.delete(`${this.contactPath}/${id}`).subscribe(() => this.reload());
   }
 }
