@@ -1,7 +1,6 @@
 package com.telran.phonebookapi.service;
 
 import com.telran.phonebookapi.dto.ContactDto;
-import com.telran.phonebookapi.dto.UserEmailDto;
 import com.telran.phonebookapi.mapper.ContactMapper;
 import com.telran.phonebookapi.model.Contact;
 import com.telran.phonebookapi.model.User;
@@ -11,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -43,12 +44,6 @@ class ContactServiceTest {
 
         User user = new User("test@gmail.com", "test");
         when(userRepository.findById(user.getEmail())).thenReturn(Optional.of(user));
-        UserDetails userDetails = (UserDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-
-        when(contactService.getUsername()).thenReturn(new UserEmailDto(user.getEmail()));
 
         ContactDto contactDto = new ContactDto();
         contactDto.firstName = "ContactName";
@@ -59,14 +54,14 @@ class ContactServiceTest {
                 contact.getFirstName().equals(contactDto.firstName)
         ));
     }
-//TODO
+    //TODO
     @Test
     public void testAdd_userDoesNotExist_EntityNotFoundException() {
 
         ContactDto contactDto = new ContactDto();
         contactDto.firstName = "ContactName";
 
-        when(contactService.getUsername()).thenReturn(new UserEmailDto("mock.mail@gmail.com"));
+//        when(contactService.getUsername()).thenReturn("mock.mail@gmail.com");
 
         Exception exception = assertThrows(EntityNotFoundException.class, () -> contactService.add(contactDto));
 

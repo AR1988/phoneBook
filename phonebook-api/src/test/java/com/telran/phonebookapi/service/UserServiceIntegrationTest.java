@@ -69,7 +69,7 @@ class UserServiceIntegrationTest {
     @Test()
     public void testActivateUser_userAlreadyExist() {
         User user = new User("ivanov@gmail.com", "12345");
-        UserDto userDto = new UserDto(user.getEmail(), user.getPassword());
+        UserDto userDto = new UserDto(user.getEmail(), user.getPassword(), false);
 
         userRepository.save(user);
 

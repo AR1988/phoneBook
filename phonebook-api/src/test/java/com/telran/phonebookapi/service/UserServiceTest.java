@@ -89,7 +89,7 @@ class UserServiceTest {
 
     @Test
     public void testAdd_user_passesToRepo() {
-        UserDto userDto = new UserDto("ivanov@gmail.com", "12345678");
+        UserDto userDto = new UserDto("ivanov@gmail.com", "12345678" ,false);
         when(bCryptPasswordEncoder.encode("12345678")).thenReturn("87654321");
         userService.addUser(userDto);
         verify(userRepository).save(userArgumentCaptor.capture());
