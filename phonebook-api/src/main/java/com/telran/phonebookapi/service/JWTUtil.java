@@ -25,6 +25,7 @@ public class JWTUtil {
     @Value("${com.telran.auth.auth.token.accessTokenCookieName}")
     private String accessTokenCookieName;
 
+
     public String generateAccessToken(String email) {
         Date date = new Date(System.currentTimeMillis() + expiration);
         Claims claims = new DefaultClaims();
