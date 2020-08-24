@@ -22,8 +22,7 @@ public class JWTUtil {
     private String jwtSecret;
     @Value("${com.telran.auth.auth.token.expiration}")
     private long expiration;
-    @Value("${com.telran.auth.auth.token.accessTokenCookieName}")
-    private String accessTokenCookieName;
+    public final String accessTokenCookieName = "at";
 
 
     public String generateAccessToken(String email) {
@@ -38,12 +37,31 @@ public class JWTUtil {
                 .compact();
     }
 
+    public HttpCookie createAccessTokenCookie(String token) {
+        LocalTime expirationTime = LocalTime.now().plusSeconds(expiration / 1000);
+        return ResponseCookie.from(accessTokenCookieName, token)
+                .httpOnly(true)
+                .maxAge(Duration.between(LocalTime.now(), expirationTime))
+                .path("/")
+                .sameSite("lax")
+                .build();
+    }
+
     public String extractUsername(String token) {
+        return Jwts
+                .parser()
+                .setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8))
+                .parseClaimsJws(token).getBody().get("username", String.class);
+    }
+
+    public boolean validateToken(String jwt) {
         try {
-            return Jwts
+            Jwts
                     .parser()
                     .setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8))
-                    .parseClaimsJws(token).getBody().get("username", String.class);
+                    .parseClaimsJws(jwt);
+
+            return true;
         } catch (SignatureException e) {
             logger.error("Invalid JWT signature: {}", e.getMessage());
         } catch (MalformedJwtException e) {
@@ -55,19 +73,6 @@ public class JWTUtil {
         } catch (IllegalArgumentException e) {
             logger.error("JWT claims string is empty: {}", e.getMessage());
         }
-        return null;
-    }
-
-    public HttpCookie createAccessTokenCookie(String token) {
-        LocalTime expirationTime = LocalTime.now().plusSeconds(expiration / 1000);
-        return ResponseCookie.from(accessTokenCookieName, token)
-                .httpOnly(true)
-                .maxAge(Duration.between(LocalTime.now(), expirationTime))
-                .path("/")
-                .build();
-    }
-
-    public String getTokenName() {
-        return accessTokenCookieName;
+        return false;
     }
 }
