@@ -40,20 +40,20 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
     public Authentication attemptAuthentication(HttpServletRequest req,
                                                 HttpServletResponse res)
             throws AuthenticationException, IOException {
-//        try {
+        try {
             UserDto userDto = objectMapper.readValue(req.getInputStream(), UserDto.class);
             Authentication auth = new UsernamePasswordAuthenticationToken(
                     userDto.email,
                     userDto.password
             );
             return authenticationManager.authenticate(auth);
-//        } catch (BadCredentialsException authEx) {
-//            logger.warn("Error Authenticating User: " + authEx.getLocalizedMessage());
-//            res.setStatus(401);
-//            res.setContentType(MediaType.APPLICATION_JSON_VALUE);
-//            res.getWriter().println(objectMapper.writeValueAsString(new ErrorDto("Username or password is incorrect!")));
-//            return null;
-//        }
+        } catch (BadCredentialsException authEx) {
+            logger.warn("Error Authenticating User: " + authEx.getLocalizedMessage());
+            res.setStatus(401);
+            res.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            res.getWriter().println(objectMapper.writeValueAsString(new ErrorDto("Username or password is incorrect!")));
+            return null;
+        }
     }
 
     @Override

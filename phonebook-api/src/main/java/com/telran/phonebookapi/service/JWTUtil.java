@@ -60,7 +60,6 @@ public class JWTUtil {
                     .parser()
                     .setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8))
                     .parseClaimsJws(jwt);
-
             return true;
         } catch (SignatureException e) {
             logger.error("Invalid JWT signature: {}", e.getMessage());

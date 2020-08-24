@@ -29,6 +29,6 @@ com.telran.auth.token.secret=secret
 #600000 10 min
 #300000 5 min
 #60000 1 min
-#com.telran.auth.auth.token.expiration=864000000
-com.telran.auth.auth.token.expiration=3600000
+#5000 5 sec
+com.telran.auth.auth.token.expiration=5000
 
