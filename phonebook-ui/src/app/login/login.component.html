@@ -1,34 +1,59 @@
 <app-header></app-header>
+
 <form [formGroup]="form" novalidate class="border border-light p-5" (ngSubmit)="onSubmit()">
-  <p class="h4 mb-4 text-center text-info font-weight-bold">Login</p>
+  <p class="h4 mb-4 text-center">Login</p>
   <div class="form-group">
     <input class="form-control mb-2" formControlName="email" placeholder="Email"
-           type="email">
+           type="email" id="loginEmail">
   </div>
-
+  <div
+    *ngIf="form.controls['email'].invalid && (form.controls['email'].dirty || form.controls['email'].touched)"
+    class="alert alert-danger">
+    <div *ngIf="form.controls['email'].errors.required">
+      Email is required.
+    </div>
+    <div *ngIf="form.controls['email'].errors.pattern">
+      Email must be a valid email address.
+    </div>
+  </div>
   <div class="form-group">
     <input type="password" formControlName="password" class="form-control mb-2"
-           placeholder="Password">
+           placeholder="Password" id="loginPassword">
   </div>
-
-  <div class="form-group">
-    <div
-      class="alert alert-danger"
-      role="alert"
-      *ngIf="isLoginFailed"
-    >
-      Login failed: {{ errorMessage }}
+  <div
+    *ngIf="form.controls['password'].invalid && (form.controls['password'].dirty || form.controls['password'].touched)"
+    class="alert alert-danger">
+    <div *ngIf="form.controls['password'].errors.required">
+      Password is required.
+    </div>
+    <div *ngIf="form.controls['password'].errors.minlength">
+      Password must be at least 8 characters.
+    </div>
+    <div *ngIf="form.controls['password'].errors.maxlength">
+      Password must be at least 20 characters.
     </div>
   </div>
 
-  <button class="btn btn-info my-4 btn-block" type="submit" [disabled]="form.pristine || form.invalid">
-  Login
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    {{errorMessage}}
+  </div>
+
+  <button class="btn btn-info my-1 btn-block" type="submit" [disabled]="form.pristine || form.invalid || errorMessage">
+    Login
   </button>
+  <hr>
 
-  <section *ngIf="loading" class="jumbotron text-center">
-    <div class="container">
-      <h4>Please check your email and reset your password</h4>
+  <div class="mt-4">
+    <div class="d-flex justify-content-center links">
+      Don't have an account? <a routerLink="/user/registration" class="ml-2">Sign Up</a>
     </div>
-  </section>
+    <div class="d-flex justify-content-center links">
+      <a routerLink="/user/forgot-password">Forgot your password?</a>
+    </div>
+  </div>
+
+  <hr>
+
 </form>
+
 <app-footer></app-footer>

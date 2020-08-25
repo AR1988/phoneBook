@@ -41,7 +41,12 @@
       Password do not match.
     </div>
   </div>
-  <button type="submit" [disabled]="angForm.pristine || angForm.invalid" class="btn btn-info my-1 btn-block">Sign up</button>
-  <a class="btn btn-success btn-block" routerLink="/user/login">Login</a>
+  <div
+    *ngIf="error" class="alert alert-danger">
+    {{error}}
+  </div>
+  <button type="submit" [disabled]="angForm.pristine || angForm.invalid || error" class="btn btn-info my-1 btn-block">Sign up
+  </button>
+  <a class="btn btn-success btn-block" routerLink="/user/login">Already have an account?</a>
 </form>
 <app-footer></app-footer>

@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {UserService} from "../service/user.service";
-import {TokenStorageService} from "../service/token-storage.service";
 import {Router} from "@angular/router";
+import {HttpErrorResponse} from "@angular/common/http";
 
 @Component({
   selector: 'app-login',
@@ -13,13 +13,10 @@ export class LoginComponent implements OnInit {
   form: FormGroup;
   loading = false;
 
-  isLoggedIn = false;
-  isLoginFailed = false;
   errorMessage = '';
   roles: string[] = [];
 
-  constructor(private userService: UserService, private tokenStorage: TokenStorageService,
-              private router: Router) {
+  constructor(private userService: UserService, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -27,26 +24,22 @@ export class LoginComponent implements OnInit {
       email: new FormControl(null, [Validators.required, Validators.pattern("^[a-z0-9._-]+@[a-z0-9.-]+\\.[a-z]{2,10}$")]),
       password: new FormControl(null, [Validators.required, Validators.minLength(8), Validators.maxLength(20)])
     })
-
-    if (this.tokenStorage.getToken()) {
-      this.isLoggedIn = true;
-      this.roles = this.tokenStorage.getUser().roles;
-    }
   }
 
-
   onSubmit() {
-
     this.userService.logIn(this.form.value)
-      .subscribe(value => {
+      .subscribe(() => {
           this.router.navigate(['user/home']);
         },
-        err => {
-          this.errorMessage = err.error.message;
-          this.isLoginFailed = true;
-        }
-      );
+        error => {
+          this.errorMessage = this.handleError(error);
+        });
+  }
 
+  private handleError(error: HttpErrorResponse): string {
+    if (error.error instanceof ErrorEvent)
+      return `No internet connection`;
+    return error.message;
   }
 }
 

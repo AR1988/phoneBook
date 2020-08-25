@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {UserService} from "../service/user.service";
 
 @Component({
   selector: 'app-activate-email',
@@ -8,10 +7,9 @@ import {UserService} from "../service/user.service";
 })
 export class ActivateEmailComponent implements OnInit {
 
-  constructor(private userService : UserService) { }
+  constructor() { }
 
   ngOnInit(): void {
-    this.userService.getTest().subscribe(value1 => console.log(value1));
   }
 
 }

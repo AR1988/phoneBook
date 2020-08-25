@@ -16,7 +16,7 @@ export class UserService {
   private readonly getUserEndPoint = '/api/get-user';
   public user: Observable<User>;
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient) {
   }
 
   newUserRegistration(user: User) {
@@ -52,7 +52,4 @@ export class UserService {
     this.user = this.http.get<User>(this.getUserEndPoint);
   }
 
-  getTest() {
-    return this.http.get(this.testEndPoint);
-  }
 }
